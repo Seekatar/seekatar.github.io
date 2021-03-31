@@ -1,0 +1,22 @@
+collections:
+  authors:
+    output: true
+  popups:
+  coding:
+  photos:
+
+defaults:
+- scope:
+    path: ""
+    type: "authors"
+  values:
+    layout: "author"
+- scope:
+    path: ""
+    type: "posts"
+  values:
+    layout: "post"
+- scope:
+    path: ""
+  values:
+    layout: "default"
