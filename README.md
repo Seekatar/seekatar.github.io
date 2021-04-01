@@ -8,3 +8,8 @@ Public website for Seekatar
 ```
 jekyll serve --livereload
 ```
+
+```
+# restricts Ruby to use gems in Gemfile
+bundle exec jekyll serve --livereload
+```
