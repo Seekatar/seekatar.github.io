@@ -1,4 +1,0 @@
----
-author: seekatar
----
-Woot
