@@ -1,7 +1,7 @@
-- name: Home
-  link: /
-- name: Blog
-  link: /blog.html
+# - name: Home
+#   link: /
+# - name: Blog
+#   link: /blog.html
 - name: Code
   link: /code-blog.html
 - name: PopUps
