@@ -1,3 +1,14 @@
+# theme: jekyll-theme-minimal
+theme: jekyll-theme-hacker
+
+title: Seekatar's Ruminations
+description: A coder's view on life, the universe, and everything.
+
+imageWidth: "75%"
+
+show_downloads: false
+show_github: false
+
 collections:
   authors:
     output: true
@@ -18,6 +29,11 @@ defaults:
     layout: "post"
 - scope:
     path: ""
+    type: "popups"
+  values:
+    layout: "post"
+- scope:
+    path: ""
   values:
     layout: "default"
 
@@ -25,4 +41,11 @@ plugins:
   - jekyll-feed
   - jekyll-sitemap
   - jekyll-seo-tag
-theme: jekyll-theme-midnight
+
+# Disqus Comments
+disqus:
+    # Leave shortname blank to disable comments site-wide.
+    # Disable comments for any post by adding `comments: false` to that post's YAML Front Matter.
+    shortname: seekatar-github-io
+
+url: my_website_url

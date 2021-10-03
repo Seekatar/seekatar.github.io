@@ -1,20 +1,19 @@
 ---
 layout: default
 ---
+<link rel="stylesheet" href="{{ '/assets/css/gist.css?v=' | append: site.github.build_revision | relative_url }}">
+
+<small>{{ page.date | date: "%-d %B %Y" }}</small>
 <h1>{{ page.title }}</h1>
 
-<p>
-  {{ page.date | date_to_string }}
-  <!-- page author is {{ page.author }}
-  <ul>
-  {% for a in site.authors %}
-  <li>an author is >>> {{a.short_name}}</li>
-  {%endfor%}
-</ul> -->
-  author: {% assign author = site.authors | where: 'short_name', page.author | first %}
-  {% if author %}
-    - <a href="{{ author.url }}">{{ author.short_name }}</a>
-  {% endif %}
-</p>
+<!-- <p class="view">by {{ page.author | default: site.author }}</p>
+ -->
+{{content}}
 
-{{ content }}
+{% if page.tags %}
+  <small>tags: <em>{{ page.tags | join: "</em> - <em>" }}</em></small>
+{% endif %}
+
+{% if site.disqus.shortname %}
+  {% include disqus_comments.html %}
+{% endif %}

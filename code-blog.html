@@ -1,0 +1,15 @@
+---
+layout: default
+title: Blog
+---
+<h1>Code Posts</h1>
+
+<ul>
+  {% assign filtered_posts = site.posts | where_exp:"item", "item.tags contains 'code'" %}
+  {% for post in filtered_posts %}
+    <li>
+      <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+      {{ post.synopsis }}
+    </li>
+  {% endfor %}
+</ul>
