@@ -1,5 +1,5 @@
-# - name: Home
-#   link: /
+- name: Home
+  link: /
 # - name: Blog
 #   link: /blog.html
 - name: Code
