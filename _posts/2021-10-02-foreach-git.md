@@ -6,6 +6,7 @@ tags:
  - git
  - code
 synopsis: Run a scriptblock in each git repo folder
+comments: true
 ---
 
 ## Problem
