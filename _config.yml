@@ -48,4 +48,5 @@ disqus:
     # Disable comments for any post by adding `comments: false` to that post's YAML Front Matter.
     shortname: seekatar-github-io
 
-url: my_website_url
+# url: my_website_url
+mybaseurl: https://seekatar.github.io

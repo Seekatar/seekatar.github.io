@@ -2,8 +2,20 @@
 <div id="disqus_thread"></div>
 <script>
     var disqus_config = function () {
-      this.page.url = '{{ page.url | absolute_url }}';
-      this.page.identifier = '{{ page.url | absolute_url }}';
+
+      // this works on local host for all pages
+      var url = '{{ page.url | absolute_url }}';
+      url = url.replace(new URL(url).origin,'{{ site.mybaseurl }}')
+      this.page.url = url
+      this.page.identifier = url
+
+      // this works on local host for all pages
+      // this.page.url = 'https://seekatar.github.io/2021/10/22/helm-testing.html';
+      // this.page.identifier = 'https://seekatar.github.io/2021/10/22/helm-testing.html';
+
+      // this only works on feg
+      // this.page.url = '{{ page.url | absolute_url }}';
+      // this.page.identifier = '{{ page.url | absolute_url }}';
       console.log(this.page)
     };
     (function() {
