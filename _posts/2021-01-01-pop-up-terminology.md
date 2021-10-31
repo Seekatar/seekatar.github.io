@@ -1,20 +1,21 @@
 ---
 author: seekatar
+title: Pop-Up Terminology
 synopsis: Terminology
 ---
 
-## Pop-Up Terms
+## General Terms
 
-180-degree card
+180&deg; card
 : A card the opens flat (See [Thankgiving Turkey](/2021/10/30/thanksgiving-turkey.html))
 
-90-degree card
-: A card the opens only to 90-degrees. (See [Mars Rover](/2021/03/28/mars-rover.html))
+90&deg; card
+: A card the opens only to 90&deg;s. (See [Mars Rover](/2021/03/28/mars-rover.html))
 
-Zero-degree card
+Zero&deg; card
 : A card where the design is created by layers of paper that can be opened one at a time. No 3D mechanism is involved. (2021 Christmas card coming in December)
 
-## Pop-up Mechanisms
+## Mechanisms
 
 This table briefly describes the basic pop-up mechanisms used for about every pop-up you'll see. BH2 refers to the number in [Pop-Up Design and Paper Mechanics: How to Make Folding Paper Sculpture](/2021/01/01/pop-up-books.html#pop-up-design-and-paper-mechanics:-how-to-make-folding-paper-sculpture), one of my favorite books.
 

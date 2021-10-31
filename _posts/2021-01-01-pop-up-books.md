@@ -1,6 +1,7 @@
 ---
 author: seekatar
 thumbnail: /images/20210327_161328.jpg
+title: Pop-up Books
 synopsis: Book Reviews
 ---
 
