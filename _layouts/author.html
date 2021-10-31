@@ -1,9 +1,9 @@
 ---
 layout: default
 ---
-<h2>Popup Posts</h2>
+<h2>Pop-Up Posts</h2>
 <ul>
-  {% assign filtered_posts = site.posts | where_exp:"item", "item.tags contains 'popup'" %}
+  {% assign filtered_posts = site.posts | where_exp:"item", "item.tags contains 'pop-up'" %}
   {% for post in filtered_posts %}
     <li><a href="{{ post.url }}"><img src={{post.thumbnail}} width="200"><br>{{ post.title }}</a></li>
   {% endfor %}

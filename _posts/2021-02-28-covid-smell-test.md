@@ -2,7 +2,7 @@
 author: seekatar
 title: Covid Smell Test
 tags:
-- popup
+- pop-up
 thumbnail: images/20210228_194044.jpg
 synopsis: How can you tell if you have Covid?
 ---
@@ -26,5 +26,5 @@ This is a fairly simple design with a very slight acute V (FS2) main mechanism w
 
 * 9" x 6.5"
 * Everything was cut by hand
-* The base is [Strathmore 300 Bristol](https://www.amazon.com/gp/product/B00254AU8Q/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B00254AU8Q&linkCode=as2&tag=seekatar-20&linkId=2de8cdb5419da0d38ea1bed26302a574) 100lb, with pastel backgrounds and [PrismaColor](https://www.amazon.com/gp/product/B01IGMJ6R6/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B01IGMJ6R6&linkCode=as2&tag=seekatar-20&linkId=7608ff8f1a6021f33431e88319009133) colored pencils for illustrations.
+* The base is [Strathmore 300 Bristol](/2021/01/01/supplies.html#strathmore-300-bristol) 100lb, with pastel backgrounds and [PrismaColor]((/2021/01/01/supplies.html#prismacolor-colored-pencils) colored pencils for illustrations.
 * The mechanism is cardstock

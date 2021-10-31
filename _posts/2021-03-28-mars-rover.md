@@ -1,18 +1,18 @@
 ---
 author: seekatar
 tags:
-- popup
+- pop-up
 thumbnail: /images/20210327_161328.jpg
-synopsis: A popup to celebrate the landing of Ingenuity on Mars.
+synopsis: A pop-up to celebrate the landing of Ingenuity on Mars.
 ---
-April 2021 card. A popup to celebrate the landing of Ingenuity on Mars.
+April 2021 card. A pop-up to celebrate the landing of Ingenuity on Mars.
 
 ![Mars Rover Pieces]({{site.baseurl}}/images/20210327_162809_1.gif){: width="{{ site.imageWidth }}" }
 
 ## Idea
 
 This was pretty easy to come up with, but the design took quite a bit of time. NASA used to have a 3D model of Ingenuity on their site, but it looks like only the helicopter is there now.
-But that was a great resource for designing the popup. I tried to make it as accurate as possible without getting too crazy.
+But that was a great resource for designing the pop-up. I tried to make it as accurate as possible without getting too crazy.
 
 ## Design
 
@@ -33,7 +33,7 @@ These are the main pieces. In all there are over 100 pieces applied to the mecha
 ## Build
 
 * 9" x 6.5"
-* Since this required iteration and a high level of accuracy, it was designed on the computer and cut out with a [Sihouette Cameo](https://www.amazon.com/gp/product/B07VLB3627/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B07VLB3627&linkCode=as2&tag=seekatar-20&linkId=99314274bc7e1c674116a9abe3c70360)
-* The base is [Strathmore 300 Bristol](https://www.amazon.com/gp/product/B00254AU8Q/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=B00254AU8Q&linkCode=as2&tag=seekatar-20&linkId=2de8cdb5419da0d38ea1bed26302a574) 100lb, with pastel backgrounds and cut logo on the cover.
+* Since this required iteration and a high level of accuracy, it was designed on the computer and cut out with a [Sihouette Cameo](/2021/01/01/supplies.html#silhouette-cameo-cutting-machine)
+* The base is [Strathmore 300 Bristol](/2021/01/01/supplies.html#strathmore-300-bristol) 100lb, with pastel backgrounds and cut logo on the cover.
 * The mechanism is Office Depot Bristol 100lb (but thinner than Strathmore)
 * Dry brushed the model with pastels to give it a dusty appearance.
