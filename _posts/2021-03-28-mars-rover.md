@@ -1,7 +1,7 @@
 ---
-author: seekatar
 tags:
 - pop-up
+title: April 2021
 thumbnail: /images/20210327_161328.jpg
 synopsis: A pop-up to celebrate the landing of Ingenuity on Mars.
 ---
@@ -31,6 +31,12 @@ Below are the basic pieces of the rover before assembly. In the center you can s
 This is an image from the editor of all the pieces. Green ones are the main rover. Red are for all the applied pieces, most located close to where they are applied, so I could keep them straight. In all there are over 100 pieces applied to the mechanism to give it the detail such as wheel spokes, etc.
 
 ![Mars Rover Pieces]({{site.baseurl}}/images/rover-parts.png){: width="{{ site.imageWidth }}" }
+
+## Cover
+
+![Cover]({{site.baseurl}}{{page.thumbnail}}){: width="{{ site.coverWidth }}" }
+
+The cover's background is pastels and the logo was cut by the machine out of colored paper.
 
 ## Build
 

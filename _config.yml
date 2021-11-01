@@ -5,6 +5,7 @@ title: Seekatar's Ruminations
 description: A coder's view on life, the universe, and everything.
 
 imageWidth: "75%"
+coverWidth: "50%"
 
 show_downloads: false
 show_github: false
@@ -27,6 +28,7 @@ defaults:
     type: "posts"
   values:
     layout: "post"
+    author: "seektar"
 - scope:
     path: ""
     type: "popups"

@@ -1,7 +1,7 @@
 ---
-author: seekatar
 tags:
 - pop-up
+title: November 2021
 thumbnail: /images/20211026_182320.jpg
 synopsis: A pop-up for Thanksgiving.
 ---
@@ -26,6 +26,10 @@ From the top you can see the evenly spaced V folds.
 For the turkey's body, I used the curved-shape (FS15) technique cut by hand. This is a somewhat ovate shape with the top half glued along the edge, and the base glued in parallel from the main fold to give it a rounded shape as it opens up. Then the rest of the turkey is a few pieces folded once and glued together.
 
 The turkey must be forward on the card to keep the feathers from poking out of the top when closed, which gives an empty space on the top. I should have printed on the paper first to fill that, but didn't, so I used vinyl letters applied afterwards.
+
+## Cover
+
+![Cover]({{site.baseurl}}{{page.thumbnail}}){: width="{{ site.coverWidth }}" }
 
 For the cover, I used pastels sprinkled on through a kitchen strainer, then smudged around with my fingers. The pumpkins are some of my son's elementary school artwork (I'm sure he's glad we kept all that!).
 

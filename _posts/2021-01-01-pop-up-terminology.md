@@ -17,7 +17,7 @@ Zero&deg; card
 
 ## Mechanisms
 
-This table briefly describes the basic pop-up mechanisms used for about every pop-up you'll see. BH2 refers to the number in [Pop-Up Design and Paper Mechanics: How to Make Folding Paper Sculpture](/2021/01/01/pop-up-books.html#pop-up-design-and-paper-mechanics:-how-to-make-folding-paper-sculpture), one of my favorite books.
+This table briefly describes the basic pop-up mechanisms used for about every pop-up you'll see using terminology from [Pop-Up Design and Paper Mechanics: How to Make Folding Paper Sculpture](/2021/01/01/pop-up-books.html#pop-up-design-and-paper-mechanics:-how-to-make-folding-paper-sculpture), one of my favorite books. BH2 refers the the number in that book. BH1 refers to his earlier book, [Pop Up!: A Manual of Paper Mechanisms](/2021/01/01/pop-up-books.html#pop-up!:-a-manual-of-paper-mechanisms)
 
 ### Foundation Shapes
 
@@ -41,3 +41,17 @@ This table briefly describes the basic pop-up mechanisms used for about every po
 | Twisting Mechanism       | FS16 | An interesting mechanism that twists as the page is opened. It also gives you many options for building more mechanisms on it. |
 | Automatic Pull-strip     | FS17 | As the page is opened a strip pulls up a half cylinder or parallel shape.                                                      |
 | Moving Arms              | FS18 | Always a favorite since the movement can be dramatic as an arm moves when the page is opened.                                  |
+
+### Building Techniques
+
+| Name                | BH2 | Description                                                                               |
+| ------------------- | --- | ----------------------------------------------------------------------------------------- |
+| Cutting Parts Away  | BT1 | Cutting parts of a mechanism can drastically change its shape                             |
+| Sticking Pieces On  | BT2 | Adding new pieces on folds created by a mechanism is very common                          |
+| Extra Creases       | BT3 | This adds more folds to a mechanism                                                       |
+| Angle-folded strips | BT4 | These are added pieces like BT2, but with extra creases                                   |
+| Counter folds       | BT5 | Folds cut into or added to a fold. OA is all counter folds                                |
+| Slots               | BT6 | With many variations, a slot cut into a mechanism allows another piece to slide in or out |
+| Bending Planes      | BT7 | Spirals, 7.1, and flattened gullies, 7.2                                                  |
+| Straps              | BT8 | Straps add new folds on the base of a 180&deg; card                                       |
+| 45-degree folds     | BT9 | These can lift a vertical piece on a folder, or attach to another mechanism               |

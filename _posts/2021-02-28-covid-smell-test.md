@@ -1,9 +1,8 @@
 ---
-author: seekatar
-title: Covid Smell Test
 tags:
 - pop-up
-thumbnail: images/20210228_194044.jpg
+title: March 2021
+thumbnail: /images/20210228_194044.jpg
 synopsis: How can you tell if you have Covid?
 ---
 March 2021 card. How can you tell if you have Covid?
@@ -20,7 +19,13 @@ And behind the scenes, you learn what the smell test is all about.
 
 ## Design
 
-This is a fairly simple design with a very slight acute V (FS2) main mechanism with a parallelogram (FS7) for the bathtub and then a spiral for the tube. Spirals take a bit of trial-and-error to get them working nicely.
+This is a fairly simple design with a very slight acute V (FS2) main mechanism with a parallelogram (FS7) for the bathtub and then a spiral (BT7) for the tube. Spirals take a bit of trial-and-error to get them working nicely.
+
+## Cover
+
+![Cover]({{site.baseurl}}{{page.thumbnail}}){: width="{{ site.coverWidth }}" }
+
+The sign text was printed. The rest of the imagery was drawn with a gel pen and colored pencils to fill it in. The background is pastels.
 
 ## Build
 
