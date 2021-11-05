@@ -1,9 +1,9 @@
 ---
 tags:
 - pop-up
-title: November 2021
+title: November 2021 Pop-Up
 thumbnail: /images/20211026_182320.jpg
-synopsis: A pop-up for Thanksgiving.
+synopsis: Gobble, gobble!
 ---
 November 2021 card. A pop-up for Thanksgiving.
 

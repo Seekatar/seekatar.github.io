@@ -1,7 +1,7 @@
 ---
 tags:
 - pop-up
-title: April 2021
+title: April 2021 Pop-Up
 thumbnail: /images/20210327_161328.jpg
 synopsis: A pop-up to celebrate the landing of Ingenuity on Mars.
 ---

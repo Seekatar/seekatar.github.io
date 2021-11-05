@@ -1,7 +1,7 @@
 ---
 tags:
 - pop-up
-title: March 2021
+title: March 2021 Pop-Up
 thumbnail: /images/20210228_194044.jpg
 synopsis: How can you tell if you have Covid?
 ---
