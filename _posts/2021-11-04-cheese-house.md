@@ -47,7 +47,7 @@ You would be greatly impressed at my cutting of all those perfect circles, if I 
 
 For the cover, I used pastels sprinkled on through a kitchen strainer, then smudged around with my fingers. The speech balloon was printed on paper and applied to the front. The mouse was drawn by hand on paper, cut out by hand and applied.
 
-> Pro Tip! Always to the cover before putting any mechanisms on the inside. Otherwise when rubbing anything down, you won't have a flat surface.
+> Pro Tip! Always do the cover before putting any mechanisms on the inside. Otherwise when rubbing anything down or drawing, you won't have a flat surface and it will leave marks.
 
 ## Build
 

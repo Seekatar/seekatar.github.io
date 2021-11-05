@@ -2,6 +2,7 @@
 author: seekatar
 title: Pop-Up Terminology
 synopsis: Terminology
+tags: pop-up terminology
 ---
 
 ## General Terms
