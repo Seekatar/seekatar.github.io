@@ -3,7 +3,7 @@ author: seekatar
 thumbnail: /images/20210327_161328.jpg
 title: Pop-up Books
 synopsis: Book Reviews
-tags: books pop-up
+tags: books
 ---
 
 > As an Amazon Associate I earn from qualifying purchases.
@@ -59,3 +59,11 @@ No longer in print, this one is interesting in that it is itself a pop-up book w
 by Trish Phillips, Ann Montanaro
 
 As the title suggest, this has 50 well-thought out projects of varying difficulty. It also has a great section about the history or popups.
+
+## Best Greeting Cards
+
+<a href="https://www.amazon.com/Pop-Up-Greeting-Cards-Origami-Classroom/dp/0870409646?keywords=nakazawa+cards&qid=1636903473&sr=8-11&linkCode=li2&tag=seekatar-20&linkId=db4c44d1669d161dbcad4b5e0f102e5b&language=en_US&ref_=as_li_ss_il" target="_blank"><img border="0" src="//ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=0870409646&Format=_SL160_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=seekatar-20&language=en_US" ></a><img src="https://ir-na.amazon-adsystem.com/e/ir?t=seekatar-20&language=en_US&l=li2&o=1&a=0870409646" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+
+by Keiko Nakazawa
+
+Ondori publishes many good pop-up books, and this one has many greeting card ideas. Included are many interested 180&deg; and 90&deg; cards, and more interestingly a 360&deg; design and many 0&deg; designs. The 360&deg; is a dice cube that forms when you open the card all the way so the front and back touch. This is the only book I've found with the 0&deg; designs. I've made a couple of my own, including the 2021 Christmas card, which I blogged about.
