@@ -1,5 +1,5 @@
 ---
-author: seekatar
+# author: seekatar
 title: Registering with Reflection
 tags:
  - dependency injection
@@ -7,12 +7,15 @@ tags:
  - C#
  - code
 synopsis: Register classes with DI for ASP.NET Core/5/6
+cover: /assets/images/green-leaf-1182415-1280x912.jpg
 comments: true
 ---
 
+![image](/assets/images/green-leaf-1182415-1280x912.jpg){: width="{{ site.imageWidth }}" }
+
 ## Problem
 
-I have a bunch of classes that need to be registered with the ASP.NET service collection, but don't want to manually add them.
+I have a bunch of classes that need to be registered with the ASP.NET service collection, but don't want to manually add them.<!--more-->
 
 ## Solution
 
@@ -20,7 +23,7 @@ To solve this I'm going to use Reflection to get all the classes I want to regis
 
 First I need to find all the classes that meet the criteria. Here's a method that gets all the types that are matched with a `Predicate` that is passed into it by looking at all the types loaded in the current app domain.
 
-```C#
+```csharp
 public static List<Type> GetTypesInLoadedAssemblies(Predicate<Type> predicate, string assemblyPrefix = "")
 {
     return AppDomain.CurrentDomain.GetAssemblies()
@@ -33,7 +36,7 @@ public static List<Type> GetTypesInLoadedAssemblies(Predicate<Type> predicate, s
 
 To get all the classes that implement an interface and register them, I can call it like this.
 
-```C#
+```csharp
 var types = GetTypesInLoadedAssemblies((type) => typeof(IMyInterface).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract);
 
 foreach ( var type in types)
@@ -44,7 +47,7 @@ foreach ( var type in types)
 
 This works fine when all this code and the classes you want to register are loaded into your app domain, but that may not be the case if you haven't referenced anything in the assembly yet to load it. To get around that you can load the assemblies by hand. No doubt you have a good naming convention for your assemblies so you can pass a `searchPattern` like `MyCompany*.dll` to load all your assemblies so that `AppDomain.CurrentDomain.GetAssemblies` will be able to find all your classes.
 
-```C#
+```csharp
 public static IEnumerable<Assembly> GetAssemblies(string searchPattern)
 {
     var assemblies = Directory.EnumerateFiles(

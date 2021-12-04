@@ -7,8 +7,11 @@ tags:
  - testing
  - code
 synopsis: Locally testing Helm chart changes
+cover: /assets/images/grape-vine-leaf-1327453-1279x851.jpg
 comments: true
 ---
+
+![image](/assets/images/grape-vine-leaf-1327453-1279x851.jpg){: width="{{ site.imageWidth }}" }
 
 ## Problem
 

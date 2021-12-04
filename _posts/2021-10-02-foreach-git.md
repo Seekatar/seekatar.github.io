@@ -6,8 +6,11 @@ tags:
  - git
  - code
 synopsis: Run a scriptblock in each git repo folder
+cover: /assets/images/fern-leaf-1372477-1280x960.jpg
 comments: true
 ---
+
+![image](/assets/images/fern-leaf-1372477-1280x960.jpg){: width="{{ site.imageWidth }}" }
 
 ## Problem
 
