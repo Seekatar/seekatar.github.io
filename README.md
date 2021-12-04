@@ -1,7 +1,7 @@
 # seekatar.github.io
 Public website for Seekatar
 
-https://seekatar.github.io/
+https://howardpwardinkle.github.io/
 
 ## Jekyll
 
@@ -20,6 +20,11 @@ gem build
 bundle exec jekyll serve --livereload
 ```
 
-[Starting Theme](https://github.com/pages-themes/hacker)
+[Starting Theme](https://tianqi.name/jekyll-TeXt-theme/)
+[On Github](https://github.com/kitian616/jekyll-TeXt-theme)
 
 [Liquid Doc](https://shopify.github.io/liquid/tags/iteration/)
+
+[Original Theme Readme](text_README.md)
+
+[Photos](https://www.freeimages.com/)
