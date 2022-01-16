@@ -10,6 +10,7 @@ excerpt: Register classes with DI for ASP.NET Core/5/6
 cover: /assets/images/green-leaf-1182415-1280x912.jpg
 comments: true
 layout: article
+key: loading-reflection
 ---
 
 ![image](/assets/images/green-leaf-1182415-1280x912.jpg){: width="{{ site.imageWidth }}" }

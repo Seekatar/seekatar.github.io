@@ -9,6 +9,7 @@ excerpt: Run a scriptblock in each git repo folder
 cover: /assets/images/fern-leaf-1372477-1280x960.jpg
 comments: true
 layout: article
+key: foreach-git
 ---
 
 ![image](/assets/images/fern-leaf-1372477-1280x960.jpg){: width="{{ site.imageWidth }}" }
