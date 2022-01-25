@@ -1,5 +1,5 @@
 ---
-author: seekatar
+# author: seekatar
 title: ForEach-Git.ps1
 tags:
  - powershell

@@ -1,5 +1,5 @@
 ---
-author: seekatar
+# author: seekatar
 title: Psake Task Name Completion
 tags:
  - powershell

@@ -23,7 +23,7 @@ titles:
   fr-FR   : *FR
   fr-LU   : *FR
   # @end locale config
-key: page-about
+# key: page-about
 ---
 
 A hands-on software architect well past his sell-by date, I am still learning, still making bugs, and still fixing bugs.

@@ -1,5 +1,5 @@
 ---
-author: seekatar
+# author: seekatar
 title: Testing a Helm Chart
 tags:
  - helm
