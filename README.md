@@ -27,4 +27,4 @@ bundle exec jekyll serve --livereload
 
 [Original Theme Readme](text_README.md)
 
-[Photos](https://www.freeimages.com/)
+[Photos](https://www.freeimages.com/) or [Here](https://www.piqsels.com/)

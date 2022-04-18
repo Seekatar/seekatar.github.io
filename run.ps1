@@ -1,4 +1,4 @@
-#!pwsh
+#!/usr/bin/pwsh
 param (
     [ArgumentCompleter({
         param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
@@ -69,9 +69,6 @@ foreach ($currentTask in $Tasks) {
                 executeSB -WorkingDirectory (Join-Path $PSScriptRoot .) {
                 bundle exec jekyll serve --livereload
                 }
-            }
-            'ssh' {
-                eval `ssh-agent -s` && ssh-add ~/.ssh/seekatar
             }
             default {
                 throw "Invalid task name $currentTask"
