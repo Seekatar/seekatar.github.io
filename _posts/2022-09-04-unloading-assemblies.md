@@ -15,19 +15,19 @@ key: unload-assembly
 
 ## The Problem
 
-For a recent project, I build assemblies on-the-fly and load and run them. The assemblies are small, so loading a bunch probably isn't a big issue. But still, it kinda bugged me that it loads so many. And when a new version is created, another assembly is loaded (different name, of course), but now the old, loaded one will not go away until the service is restarted.
+For a recent project, I build assemblies on-the-fly and load and run them. The assemblies are small, so loading a bunch probably isn't a big issue. And when a new version is created, another assembly is loaded (different name, of course), but now the old, loaded one will not go away until the service is restarted.
 
-Also, I'm thinking about adding "test" and "draft" assemblies that will be short-lived. No need to load them and keep them forever. So I need to unload them. I did this many moons ago with `AppDomains` on .NET Platform, so what is new now that I'm using .NET 6 (Core)?
+Also, I'm thinking about adding "test" and "draft" assemblies that will be short-lived. No need to load them and keep them forever. So I'd like to unload them. Many moons ago, I did this with `AppDomains` on .NET Platform, so what is new now that I'm using .NET 6 (Core)?
 
 ### Unloading Assemblies
 
 > All of the source code for this blog is available [here](https://github.com/Seekatar/assemblyUnloadTest).
 
-In the days of .NET Platform, to be able to unload an assembly you would create a new [AppDomain](https://docs.microsoft.com/en-us/dotnet/api/system.appdomain) and load the assembly into it. To unload the assemblies, you simply unloaded that AppDomain. AppDomains are like subprocesses, in that memory is protected from other AppDomains. A catch to that is that to use an object in another AppDomain, it has to be marshaled across the boundary.
+In the days of .NET Platform, to be able to unload an assembly you would create a new [AppDomain](https://docs.microsoft.com/en-us/dotnet/api/system.appdomain) and load the assembly into it. To unload the assembly, you simply unloaded that AppDomain. AppDomains are like subprocesses, in that memory is protected from other AppDomains. A catch to that is that to use an object in another AppDomain, it has to be marshaled across the boundary.
 
 With .NET Core, there is only one AppDomain, but there is a new [AssemblyLoadContext](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.loader.assemblyloadcontext) (ALC) to allow loading and unloading of assemblies in a separate "context." Things are easier in that no marshaling is required, but there is a second edge to that sword. Unloading an `AssemblyLoadContext` is "cooperative," meaning unlike `AppDomain.Unload` that forces everything to unload, the `ALC` only unloads when everything in it is released.
 
-This means that you must make sure no threads are running in the context, and all references to objects created in the context are free (no references in any another context, including the default). See [this from MS](https://docs.microsoft.com/en-us/dotnet/standard/assembly/unloadability#troubleshoot-unloadability-issues) for more details.
+This means that you must make sure no threads are running in the context, and all references to objects created in the context are free (no references in any another contexts, including the default). See [this from MS](https://docs.microsoft.com/en-us/dotnet/standard/assembly/unloadability#troubleshoot-unloadability-issues) for more details.
 
 ### The Road to Unloading
 
@@ -37,22 +37,22 @@ All the samples I found do something like "ExecuteAndUnload" from the [MS sample
 2. Call a method in the assembly
 3. Unload the assembly
 
-This is fine, my scenario was like this:
+This is fine, but my scenario is like this:
 
 1. Load the assembly
-2. Get an object from the assembly
-3. Return it to let others use that object for a time
-4. Let them tell me when finished so that I can unload the assembly.
+2. Get an object from the assembly into the default context
+3. Work on it in the default default context for some period of time
+4. Have the code in the default context trigger the unload
 
-I created a sample app for testing out `ALC`s. The idea is to have it load assemblies and create objects that can be called from main. Then after a time, I can call `Unload` to free all the assemblies.
+I created a sample console app for testing out `ALC`s. The idea was to have it load assemblies and create objects that can be used in `main`. Then after a time, I can call `Unload` on the context to free all the assemblies. Note that calling `AssemblyLoadContext.Unload` just starts the unload process. It may take some time and garbage collection cycles to actually unload it and its assemblies.
 
-Getting the object out is no problem. Making sure there are no references to it was a bit tricky. First I was using top-level statements for `Program.cs`, which I found that even if variables are scoped with braces, they never get garbage collected. I switched to using a class and static `Main`, but that had the same issue. Calling a method, however, did allow a variable to get collected when it was out of scope. This was critical since a variable created by the context doesn't get garbage collected, the context can never be unloaded.
+Getting the object out is no problem. Making sure there are no references to it was a bit tricky. First, I was using top-level statements for `Program.cs`, which I found that even if variables are scoped with braces, they never get garbage collected. I switched to using a class and static `Main`, but that had the same issue. Calling a method, however, did allow a variable to get collected when it was out of scope. This was critical since if a variable created by the context doesn't get garbage collected, the context will never be unloaded.
 
-> In the sample I have a `DestructorTest` class I create in the switch statement, and within a method, and only the one in the method gets collected. I have some research to do on that topic.
+> To demonstrate variables in `Main` not going away, the sample has a `DestructorTest` class that is created in `Main`'s switch statement, and within a method. Only the one created in the method gets collected. (I have some research to do on that topic.)
 
 ## The Solution: AssemblyManager
 
-Working with `ALC`s is pretty easy. It has methods to load assemblies in various ways, and unload it. For example:
+Working with an `ALC` is pretty easy. It has methods to load assemblies in various ways, and unload it. For example:
 
 ```csharp
 context.LoadFromAssemblyPath(fileName);
@@ -111,9 +111,9 @@ public void Unload(string? contextName = null)
 
 ### Testing the Manager
 
-`Engine` is a test class that drives the manager. It has methods to load a couple of assemblies (libA and libB) that have `ITest` implementations. In addition, it can use Rosyln to build assemblies in memory and load into the context. All its methods have a switch to use either the manager's first (default) context (which is _not_ the `AssemblyLoadContext.Default`), or one called "Test". It can also call methods on all objects it has created in a context.
+`Engine` is a test class that drives the manager. It has methods to load a couple of assemblies (libA and libB) that have `ITest` implementations. In addition, it can use Rosyln to build assemblies in memory and load into the context. All its methods have a switch to use either the manager's first (default) context (which is _not_ the `AssemblyLoadContext.Default`), or one called "Test." It can also call methods on all objects it has created in a context.
 
-`Program.cs` has a loop to fire off commands to the `Engine` by pressing a key.
+`Program.cs` has a loop to fire off various commands to the `Engine` by pressing a key. (see the repo's [README.md](https://github.com/Seekatar/assemblyUnloadTest/blob/main/README.md) for details)
 
 Here's a test run of the program, loading a and b into the first context (`__FirstContext__`) and calling `Message()` on them.
 
@@ -160,7 +160,7 @@ At this point, if you look at the modules, you will still see `libA.dll` and `li
 
 ![libA and libB loaded](/assets/images/2022-09-04-libs-gone.png)
 
-Using capital letters in the test program loads the assembly into the "Test" context. Here I load with b, then B to load and c then C to call them.
+Using capital letters in the test program loads the assembly into the `Test` context instead of manager's default `__FirstContext__`. Here I load with 'b' into `__FirstContext__`, then 'B' to load into `Test` and 'c' and 'C' to call them methods in each context.
 
 ```text
 b pressed
@@ -183,7 +183,7 @@ Looking in Visual Studio, you'll see that the same assembly is loaded twice.
 
 ![two libBs loaded](/assets/images/2022-09-04-2libB.png)
 
-Pressing `d` to dump the context, we see it loaded into different ones. Attempting to load `libB` into a context twice, will throw an exception.
+Pressing `d` to dump the contexts, we see it loaded libB into two different contexts. Attempting to load an assembly into a context twice will throw an exception.
 
 ```text
 d pressed
@@ -253,7 +253,7 @@ And here's the modules pane when loaded. Again two rounds of gc will clean them 
 
 ### A Little Fun
 
-You can also enter a mathematical expression that can be called. Pressing `e` will prompt for an expression that uses a variable `d`. It will create assembly with that expression, which will be called with 0-49 by pressing `p` and plotted using [Ascii Chart C#](https://github.com/NathanBaulch/asciichart-sharp)
+You can also enter a mathematical expression that can be called. Pressing `e` will prompt for an expression that uses a variable `d`. It will create assembly with that expression. Pressing `p` will call all loaded assemblies' expressions with 0-49 and plot the results using [Ascii Chart C#](https://github.com/NathanBaulch/asciichart-sharp)
 
 ```text
 Enter equation using 'd'
