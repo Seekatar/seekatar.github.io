@@ -1,7 +1,7 @@
 # seekatar.github.io
 Public website for Seekatar
 
-https://howardpwardinkle.github.io/
+https://seekatar.github.io/
 
 ## Jekyll
 
