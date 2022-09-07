@@ -251,6 +251,19 @@ And here's the modules pane when loaded. Again two rounds of gc will clean them 
 
 ![big load of assemblies](/assets/images/2022-09-04-bigload.png)
 
+### Linux and Mac, too!
+
+I've tested this on Linux (WSL) and MacOS. You can use lldb with the SOS to debug .NET applications. Directions for installing them are [here](https://github.com/dotnet/diagnostics/blob/main/documentation/sos.md)
+
+To check the loaded assemblies, I would run this commands in lldb to break into the app, dump the modules, then continue.
+
+```text
+attach program
+process interrupt
+clrModules
+c
+```
+
 ### A Little Fun
 
 You can also enter a mathematical expression that can be called. Pressing `e` will prompt for an expression that uses a variable `d`. It will create assembly with that expression. Pressing `p` will call all loaded assemblies' expressions with 0-49 and plot the results using [Ascii Chart C#](https://github.com/NathanBaulch/asciichart-sharp)
