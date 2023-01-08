@@ -20,7 +20,13 @@
         "titleBar.border": "#7750de",
         "titleBar.inactiveBackground": "#7750de99",
         "titleBar.inactiveForeground": "#e7e7e799",
-        "commandCenter.border": "#e7e7e799"
+        "commandCenter.border": "#e7e7e799",
+        "editorGroup.border": "#987be6",
+        "panel.border": "#987be6",
+        "sideBar.border": "#987be6",
+        "statusBar.debuggingBackground": "#b7de50",
+        "statusBar.debuggingBorder": "#b7de50",
+        "statusBar.debuggingForeground": "#15202b"
     },
     "peacock.remoteColor": "#7750de"
 }

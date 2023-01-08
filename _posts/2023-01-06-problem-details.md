@@ -220,7 +220,7 @@ Throwing the not implemented exception is pretty much the same as the default.
 
 ### DeveloperExceptionPage + MyMiddleware (5)
 
-This loses my middleware and returns the same as DeveloperExceptionPage (1) above.
+Since I have `UseDeveloperExceptionPage` after my middleware in `Program.cs`, it catches the exception instead of my middleware, so the output is like DeveloperExceptionPage (1) above.
 
 ### CustomProblemDetails + MyMiddleware (6)
 
@@ -237,6 +237,6 @@ This was a fun playing with the new feature, but a little disappointed with the 
 ## Links
 
 - [MS Doc: ProblemDetails](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.problemdetails)
-- [ProblemDetailsService](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.iproblemdetailsservice)
-- [RFC7807](https://tools.ietf.org/html/rfc7807)
+- [MS Doc: ProblemDetailsService](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.iproblemdetailsservice)
+- [RFC7807](https://tools.ietf.org/html/rfc7807) - Problem Details for HTTP APIs Spec
 - [Andrew Lock: Handling Web API Exceptions with ProblemDetails middleware](https://andrewlock.net/handling-web-api-exceptions-with-problemdetails-middleware/) talks about using Hellang's NuGet package for ProblemDetails
