@@ -15,19 +15,21 @@ key: unload-assembly
 
 ## What are Problem Details?
 
-ProblemDetails are an implementation of [RFC7807](https://tools.ietf.org/html/rfc7807), a standard for returning errors from an API.
+Problem details is a spec ([RFC7807](https://tools.ietf.org/html/rfc7807)) for returning standard errors from an API.
 
 The existing .NET [ProblemDetails](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.problemdetails) class conforms to that standard. ASP.NET Core also has a [Results.Problem](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.results.problem) method to return a `ProblemDetails` object from a controller.
 
 You can handle getting ProblemDetails JSON back to the client in various ways. I explored several of them in [this repo](https://github.com/Seekatar/ioptions-logger-test#returning-problemdetails-from-a-controller). One of the best ones is to use the library from Kristian Hellang: [ProblemDetails](https://www.nuget.org/packages/Hellang.Middleware.ProblemDetails). (Andrew Lock's [blog post](https://andrewlock.net/handling-web-api-exceptions-with-problemdetails-middleware/) about it has pretty good directions (better than the README).)
 
+> If you're in an ASP.NET controller method you can return `ProblemDetails` with [BaseController.Problem](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.controllerbase.problem) or [BaseController.ValidationProblem](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.controllerbase.validationproblem). Likewise Minimal APIs can use [Results.Problem](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.results.problem) or [Results.ValidationProblem](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.results.validationproblem). The [sample code](https://github.com/Seekatar/problem-details-test) demonstrates how to use those methods, but they are not the focus of this post.
+
 ## New Toys!
 
-With the new ASP.NET 7 [ProblemDetailsService](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.iproblemdetailsservice), as described in this [MS blog post](https://devblogs.microsoft.com/dotnet/asp-net-core-updates-in-dotnet-7-preview-7/#new-problem-details-service), I thought everything will be built in and I could start deleted code (the best way to eliminate bugs). But, alas, some things still aren't quite there from what I can tell.
+With the new ASP.NET 7 [ProblemDetailsService](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.iproblemdetailsservice), as described in this [MS blog post](https://devblogs.microsoft.com/dotnet/asp-net-core-updates-in-dotnet-7-preview-7/#new-problem-details-service), I thought everything will be built in and I could start deleting code (the best way to eliminate bugs). But, alas, I still can't do everything I need to do with `ProblemDetails`. (I was a bit surprised that at .NET Conf 2022, none or the ASP.NET presenters mentioned this new feature, which I thought was a big deal.)
 
-I want to be able to send a nice `ProblemDetails` object to the client with details about what went wrong. Ideally, be able to throw an exception that gets turned into `ProblemDetails`.
+Mainly, I want to be able to send a nice `ProblemDetails` object to the client with details about what went wrong. Ideally, be able to throw an exception that gets turned into `ProblemDetails`.
 
-In .NET there's no exception like that. Also, the JSON returned to the caller isn't very useful. Here's the release-mode payload from throwing an exception that includes `ProblemDetails`. Not too useful
+In .NET there's no exception like that. Also, the JSON returned to the caller isn't very useful. Here's the production-mode payload from throwing an exception (one that even includes `ProblemDetails`). Not too useful for the caller.
 
 ```json
 {
@@ -46,7 +48,7 @@ If you turn on `UseDeveloperExceptionPage()` you get much more information. But 
     "status": 500,
     "detail": "Throwing ProblemDetailsException",
     "exception": {
-        "details": "ProblemDetails:\r\n  Status: 500\r\n  Type: https://www.rfc-editor.org/rfc/rfc7231#section-6.6.1\r\n  Title: Throwing ProblemDetailsException\r\n  Detail: My detail message, look for a and status of 500 and log level of Error\r\n  Extensions:\r\n    extension_value_int: 1232\r\n    extension_value_string: Some value\r\n    method_name: ThrowProblemDetails\r\nProblemDetailsTest.ProblemDetailsException: Throwing ProblemDetailsException\r\n   at ProblemDetailsTest.Controllers.ExceptionController.ThrowProblemDetails(Guid clientId, Int32 marketEntityId, LogLevel logLevel) in C:\\code\\problem-details-test\\src\\Controllers\\ExceptionController.cs:line 53\r\n   at lambda_method2(Closure, Object, Object[])\r\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)\r\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()\r\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)\r\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()\r\n--- End of stack trace from previous location ---\r\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)\r\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)\r\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()\r\n--- End of stack trace from previous location ---\r\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)\r\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)\r\n   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)\r\n   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)\r\n   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)\r\n   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)\r\n   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)\r\n   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)",
+        "details": "ProblemDetails:\r\n  Status: 500\r\n  Type: https://www.rfc-editor.org/rfc/rfc7231#section-6.6.1\r\n  <snip>",
         "headers": {
             "Accept": [
                 "application/json"
@@ -80,36 +82,39 @@ I created a sample to explore the .NET 7 features. It's an ASP.NET 7 webapi with
 ```csharp
 builder.Services.AddProblemDetails();
 ...
-var app = builder.Build();
-...
+// --- after builder.Build()
+
+// add the default as last chance handler. If not added, prod won't return RFC 7807 compliant responses
 app.UseExceptionHandler();
 
-// this returns problemDetails if caller sets accept to application/json for responses with status codes between 400 and 599 that do not have a body
+// this returns problemDetails for other responses like 404, etc
 app.UseStatusCodePages();
 
 if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 ```
 
-That all works, giving a JSON result if the caller sets the `Accept` header to `application/json` as shown above. I have two requirements that aren't met by the default implementation.
+That all works, giving a RFC7807 JSON result (_if_ the caller sets the `Accept` header to `application/json`). The output will be as shown above.
+
+But I have two requirements that aren't met by the default implementation.
 
 1. Send the client a `ProblemDetails` object I created, deep anywhere in my code (by throwing an exception)
 2. Control logging of the `ProblemDetails` exception
 
-To solve these problems I created a `ProblemDetailsException` that simply wraps a `ProblemDetails` and `LogLevel` and middleware to catch the exception and use the new `ProblemDetailsService.WriteAsync` method to write the `ProblemDetails` to the response. Nothing too exciting here.
+To solve these problems I created a `ProblemDetailsException` and middleware to catch the exception and use the new `ProblemDetailsService.WriteAsync` method to write the `ProblemDetails` to the response. The exception is just a wrapper around `ProblemDetails` with the addition of a `LogLevel`. Nothing too exciting there.
 
-For testing, I created two endpoints: one that just throws a `NotImplementedException` and the new exception.
+For testing, I created two endpoints: one that just throws a `NotImplementedException` and one throws the new exception.
 
-When starting the sample app, you can pass in a number that's a bit flag to turn on various features. `dotnet run -- <0-7>`
+When starting the sample app, you can pass in a number that's a bit flag to turn on various features. e.g. `dotnet run -- <0-7>`
 
 ```csharp
 [Flags]
 enum ProblemDetailsEnum
 {
-    Vanilla = 0,                // just AddProblemDetails, UseExceptionHandler, and UseDeveloperExceptionPage
+    Vanilla                = 0, // just AddProblemDetails, and UseExceptionHandler
     DeveloperExceptionPage = 1, // turn on UseDeveloperExceptionPage
-    CustomProblemDetails = 2,   // use CustomizeProblemDetails when calling AddProblemDetails to see what that affects
-    UseMyMiddleware = 4         // turn on my middleware
+    CustomProblemDetails   = 2, // use CustomizeProblemDetails when calling AddProblemDetails to see what that affects
+    UseMyMiddleware        = 4  // turn on my middleware
 }
 ```
 
@@ -141,7 +146,7 @@ The 404 returned this and will return this for all the other tests.
 
 ### DeveloperExceptionPage (1)
 
-Turning on the `DeveloperExceptionPage` dumps, including the entire call stack (truncated here). The exception.details does show the `ToString()` of the exception, but not very useful to a caller.
+Turning on the `DeveloperExceptionPage` returns much more, including the entire call stack (truncated here). The `exception.details` does show the `ToString()` of the exception, but not very useful to a caller.
 
 ```json
 {
@@ -177,7 +182,7 @@ Turning on the `DeveloperExceptionPage` dumps, including the entire call stack (
 
 ### CustomProblemDetails (2)
 
-I wasn't clear on what adding this to `AddProblemDetails` does. They say it controls the creation of the `ProblemDetails` before it's written out. I see the type during it.
+I wasn't clear on what adding this to `AddProblemDetails` does. They say it controls the creation of the `ProblemDetails` before it's written out. In the sample, I set the `type` with it.
 
 ```json
 {
@@ -193,7 +198,7 @@ This is the same as DeveloperExceptionPage (1) above, but the `type` in the payl
 
 ### MyMiddleware (4)
 
-This is just my middleware, and yay!, we get nice output when throwing the `ProblemDetailsException`. You can now send the caller nice details about an error. In addition the a `ProblemDetails` in the exception, it also includes a log level so you can control what level to log the exception (if at all). The default implementation logs everything at the `Error`.
+This is just my middleware, and yay!, we get nice output when throwing the `ProblemDetailsException`. You can now send the caller nice details about an error. In addition to the `ProblemDetails`, the exception also includes a log level so you can control what level to log the exception (if at all). It defaults to `Error`. (Maybe that should be `Warning`?)
 
 ```json
 {
@@ -203,6 +208,7 @@ This is just my middleware, and yay!, we get nice output when throwing the `Prob
     "detail": "My detail message, look for a and status of 500 and log level of Error",
     "extension_value_int": 1232,
     "extension_value_string": "Some value",
+    "extension_value_now":"2023-01-08T17:26:17.8379708-05:00",
     "method_name": "ThrowProblemDetails"
 }
 ```
@@ -232,10 +238,11 @@ Same as DeveloperExceptionPage + CustomProblemDetails (3) above.
 
 ## Summary
 
-This was a fun playing with the new feature, but a little disappointed with the documentation not being able to easily send your own `ProblemDetails` object (that's been around since .NET Core 2.1). But adding an exception and middleware you can get something pretty useful, which is what Hellang's NuGet package does.
+This was a fun playing with the new feature, but a little disappointed with the documentation and not being able to easily send your own `ProblemDetails` object from anywhere in your app. By adding an exception class and middleware you can get something pretty useful, which is what Hellang's NuGet package does.
 
 ## Links
 
+- [MS blog post announcing the new classes](https://devblogs.microsoft.com/dotnet/asp-net-core-updates-in-dotnet-7-preview-7/#new-problem-details-service)
 - [MS Doc: ProblemDetails](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.problemdetails)
 - [MS Doc: ProblemDetailsService](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.iproblemdetailsservice)
 - [RFC7807](https://tools.ietf.org/html/rfc7807) - Problem Details for HTTP APIs Spec
