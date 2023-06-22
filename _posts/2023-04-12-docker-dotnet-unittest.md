@@ -1,6 +1,6 @@
 ---
 # author: seekatar
-title: 'UPDATE: Running .NET Unit tests in Docker'
+title: 'Running .NET Unit tests in Docker [Update]'
 tags:
  - docker
  - dotnet
@@ -119,11 +119,11 @@ Yay! Test and code coverage output. [Here's](https://dev.azure.com/MrSeekatar/Pi
 
 ## Using BuildKit UPDATED
 
-> This section was updated in April 2023 to use this improved method of getting logs in BuildKit.
+> This section was updated in June 2023 to use this improved method of getting logs in BuildKit.
 
 BuildKit makes your builds much faster. It is smart about transferring data, running stages in parallel, and skipping stages altogether if the output isn't used in the final stage. That last little feature breaks the method above since the test stage doesn't have output used in the final stage, and it will be skipped. To get around this you can use BuildKits optimizations, and `docker build --output` to get build and test output quite easily.
 
-Here's the `BuildKit-5-stage.Dockerfile` from the repo, which should look pretty familiar since it runs the same steps, just broken up differently.
+Here's the `BuildKit-4-stage.Dockerfile` from the repo, which should look pretty familiar since it runs the same steps, just broken up differently.
 
 ```dockerfile
 FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
@@ -136,28 +136,26 @@ COPY ["dotnet-console.sln", "."]
 RUN dotnet restore
 
 COPY . .
-RUN dotnet build "./dotnet-console/dotnet-console.csproj" -c Release /flp:logfile=/logs/Build.log --no-restore
+RUN dotnet publish "./dotnet-console/dotnet-console.csproj" -c Release -o /app/publish /flp:logfile=/logs/Build.log --no-restore
 
 WORKDIR /src/unit
-RUN dotnet test --logger "trx;LogFileName=UnitTests.trx" --no-restore --results-directory /out/testresults /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=/out/testresults/coverage/
+RUN dotnet test --logger "trx;LogFileName=UnitTests.trx" --no-restore --results-directory /out/testresults /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=/out/testresults/coverage/; exit 0
+
+WORKDIR /src
 
 FROM scratch as test-results
-COPY --from=build-test /out/testresults /out/testresults
-COPY --from=build-test /logs /out/logs
-
-FROM build-test as publish
-WORKDIR /src
-RUN dotnet publish "./dotnet-console/dotnet-console.csproj" -c Release -o /app/publish --no-build
+COPY --from=build-test /out/testresults /testresults
+COPY --from=build-test /logs /logs
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build-test /app/publish .
 ENTRYPOINT ["dotnet", "dotnet-console.dll"]
 ```
 
-The `build-test` stage does the build and test. Nothing too special here. (These could be split into separate stages, and `BuildKit-6-stage.Dockerfile` does that.)
+The `build-test` stage does the publish (with build) and test. Nothing too special here. (These could be split into separate stages, and `BuildKit-6-stage.Dockerfile` does that.)
 
-The `test-results` stage is a bit more interesting. It uses [scratch](https://hub.docker.com/_/scratch ) as its parent layer. The is a special image that has nothing at all in it and is used for building base images, or in cases like this. In this stage, I copy build and test output from the `build-test` stage to this layer. Then, to do the build and get the output with BuildKit on, I run this:
+The `test-results` stage is a bit more interesting. It uses [scratch](https://hub.docker.com/_/scratch) as its parent layer. The is a special image that has nothing at all in it and is used for building base images, or in cases like this. In this stage, I copy build and test output from the `build-test` stage to this layer. Then, to do the build and get the output with BuildKit on, I run this:
 
 ```bash
 cd src
@@ -181,46 +179,58 @@ Using `--target 'test-results'` tells the build to stop on that stage, and `--ou
                 coverage.cobertura.xml
 ```
 
-Now to do the publish and create the final layer, we call `docker build` again, with no `--target`
+A sharp-eyed reader my have noticed at the end of the `RUN dotnet test` line is `; exit 0`. This prevents a failure of the test to stop the Dockerfile and skip getting the test output. After running this command I have code to check to see if the build succeeded (`$LASTEXITCODE` == 0) and test completed before continuing.
 
-```bash
-docker build --file ../DevOps/Docker/BuildKit-5-stage.Dockerfile --tag dotnet-console .
+```powershell
+if ($LASTEXITCODE -eq 0) {
+    $file = '..\out\testresults\UnitTests.trx'
+    $test = [xml](Get-Content $file)
+    if ($test.TestRun.ResultSummary.Counters.failed -ne '0') {
+        $global:LASTEXITCODE = 1
+        throw "Tests failed with $($test.TestRun.ResultSummary.Counters.failed) failures. See $file for details"
+    }
+  ...
 ```
 
-And we're done! This method seems cleaner that having to create the test layer, and copy the log files out. One thing you may wonder is, doesn't this double your build time since you do `docker build` twice? Actually, no, due to the magic of caching. Here's the output from the second build:
+Now to create the final layer, we call `docker build` again, with no `--target`
+
+```bash
+docker build --file ../DevOps/Docker/BuildKit-4-stage.Dockerfile --tag dotnet-console .
+```
+
+And we're done! This method seems cleaner that having to create the test layer, and copy the log files out. One thing you may wonder is, doesn't this double your build time since I do `docker build` twice? Actually, no, due to the magic of caching. Here's the output from the second build which runs almost instantly:
 
 ```pwsh
-[+] Building 4.0s (21/21) FINISHED
- => [internal] load build definition from BuildKit-5-stage.Dockerfile                                0.0s
- => => transferring dockerfile: 49B                                                                  0.0s
- => [internal] load .dockerignore                                                                    0.0s
- => => transferring context: 35B                                                                     0.0s
- => [internal] load metadata for mcr.microsoft.com/dotnet/sdk:6.0                                    2.2s
- => [internal] load metadata for mcr.microsoft.com/dotnet/runtime:6.0                                2.3s
- => [build-test  1/10] FROM mcr.microsoft.com/dotnet/sdk:6.0@sha256:d5f9090e564d391c0f00005bc06c74d  0.0s
- => [internal] load build context                                                                    0.0s
- => => transferring context: 384B                                                                    0.0s
- => [base 1/1] FROM mcr.microsoft.com/dotnet/runtime:6.0@sha256:3b77b184e337211aeb354a5e5a64fcbc4c1  0.0s
- => CACHED [final 1/2] WORKDIR /app                                                                  0.0s
- => CACHED [build-test  2/10] WORKDIR /src                                                           0.0s
- => CACHED [build-test  3/10] COPY [dotnet-console/dotnet-console.csproj, ./dotnet-console/dotnet-c  0.0s
- => CACHED [build-test  4/10] COPY [unit/unit.csproj, ./unit/unit.csproj]                            0.0s
- => CACHED [build-test  5/10] COPY [dotnet-console.sln, .]                                           0.0s
- => CACHED [build-test  6/10] RUN dotnet restore                                                     0.0s
- => CACHED [build-test  7/10] COPY . .                                                               0.0s
- => CACHED [build-test  8/10] RUN dotnet build "./dotnet-console/dotnet-console.csproj" -c Release   0.0s
- => CACHED [build-test  9/10] WORKDIR /src/unit                                                      0.0s
- => CACHED [build-test 10/10] RUN dotnet test --logger "trx;LogFileName=UnitTests.trx" --no-restore  0.0s
- => [publish 1/2] WORKDIR /src                                                                       0.0s
- => [publish 2/2] RUN dotnet publish "./dotnet-console/dotnet-console.csproj" -c Release -o /app/pu  1.4s
- => [final 2/2] COPY --from=publish /app/publish .                                                   0.0s
- => exporting to image                                                                               0.1s
- => => exporting layers                                                                              0.0s
- => => writing image sha256:593bd2b165cd20ae7eba955b30953d3af15eda899a16b6f0daf357f5973c759c         0.0s
+[+] Building 0.2s (20/20) FINISHED
+ => [internal] load .dockerignore                                        ... 0.0s
+ => => transferring context: 2B                                          ... 0.0s
+ => [internal] load build definition from BuildKit-4-stage.Dockerfile    ... 0.0s
+ => => transferring dockerfile: 1.26kB                                   ... 0.0s
+ => [internal] load metadata for mcr.microsoft.com/dotnet/sdk:6.0        ... 0.1s
+ => [internal] load metadata for mcr.microsoft.com/dotnet/runtime:6.0    ... 0.1s
+ => [build-test  1/11] FROM mcr.microsoft.com/dotnet/sdk:6.0@sha256:a3b  ... 0.0s
+ => [base 1/1] FROM mcr.microsoft.com/dotnet/runtime:6.0@sha256:87217a1  ... 0.0s
+ => [internal] load build context                                        ... 0.1s
+ => => transferring context: 28.70kB                                     ... 0.0s
+ => CACHED [final 1/2] WORKDIR /app                                      ... 0.0s
+ => CACHED [build-test  2/11] WORKDIR /src                               ... 0.0s
+ => CACHED [build-test  3/11] COPY [dotnet-console/dotnet-console.cspro  ... 0.0s
+ => CACHED [build-test  4/11] COPY [unit/unit.csproj, ./unit/unit.cspro  ... 0.0s
+ => CACHED [build-test  5/11] COPY [dotnet-console.sln, .]               ... 0.0s
+ => CACHED [build-test  6/11] RUN dotnet restore                         ... 0.0s
+ => CACHED [build-test  7/11] COPY . .                                   ... 0.0s
+ => CACHED [build-test  8/11] RUN dotnet publish "./dotnet-console/dotn  ... 0.0s
+ => CACHED [build-test  9/11] WORKDIR /src/unit                          ... 0.0s
+ => CACHED [build-test 10/11] RUN dotnet test --logger "trx;LogFileName  ... 0.0s
+ => CACHED [build-test 11/11] WORKDIR /src                               ... 0.0s
+ => CACHED [final 2/2] COPY --from=build-test /app/publish .             ... 0.0s
+ => exporting to image                                                   ... 0.0s
+ => => exporting layers                                                  ... 0.0s
+ => => writing image sha256:f2ac93cde4800675c1f34ac5bdd8700895087087e66  ... 0.0s
  => => naming to docker.io/library/dotnet-console
 ```
 
-You can see that up the the `publish` stage, everything is cached from the first `docker build --target test-result` we ran the first time. No rebuilding.
+You can see that everything is cached from the first `docker build --target test-result` we ran the first time. No rebuilding.
 
 > By default when running locally, BuildKit hides the output of each layer after it runs, so if you need to see output for diagnostic purposes, etc. add `--progress plain`
 
@@ -228,10 +238,10 @@ You can see that up the the `publish` stage, everything is cached from the first
 
 ## Testing BuildKit
 
-To test running tests, I created four Dockerfiles.
+To test running tests, I created several Dockerfiles.
 
 Dockerfile-3stage
-: This is the one from above and works fine in Azure DevOps, but not with BuildKit
+: This is the one from [above](#getting-the-test-output-locally) and works fine in Azure DevOps, but not with BuildKit
 
 Dockerfile-3stage-with-copy
 : This one creates a tiny file in the `test` stage and copies it in the `final` stage forcing Docker BuildKit to run the `test` stage. Although the test runs, BuildKit removes the label and you can't get the output.
@@ -242,8 +252,8 @@ Dockerfile-2stage
 Dockerfile-2stage-copying-test
 : This is a two-stage file, but the `final` stage copies the test output. This works with BuildKit on or off, but has the disadvantage of polluting the final image with test output.
 
-BuildKit-5-stage.Dockerfile
-: This uses BuildKit and is detailed [above](#testing-buildkit). This seems the cleanest method of all.
+BuildKit-4-stage.Dockerfile
+: This uses BuildKit and is detailed [above](#using-buildkit-updated). This seems the cleanest method of all.
 
 | Dockerfile                     | BuildKit | Build Switch | Tests Run | Test Container |
 | ------------------------------ | -------- | ------------ | --------- | -------------- |
@@ -263,10 +273,10 @@ BuildKit-5-stage.Dockerfile
 |                                | Yes      | --rm         | ✅         | ✅              |
 |                                | No       |              | ✅         | ✅              |
 |                                | No       | --rm         | ✅         | ✅              |
-| BuildKit-5-stage.Dockerfile    | Yes      |              | ✅         | ✅              |
+| BuildKit-4-stage.Dockerfile    | Yes      |              | ✅         | ✅              |
 |                                | Yes      | --rm         | ✅         | ✅              |
-|                                | n/a      |              |           |                |
-|                                | n/a      |              |           |                |
+|                                | n/a      |              |             |                 |
+|                                | n/a      |              |             |                 |
 
 ## The End
 
