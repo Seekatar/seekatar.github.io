@@ -6,7 +6,7 @@ tags:
  - authorization
  - asp.net
 excerpt: Exploring ASP.NET Auth
-cover: /assets/images/leaf2.jpg
+cover: /assets/images/super-natural-1639059.jpg
 comments: true
 layout: article
 key: aspnet-auth
@@ -14,92 +14,95 @@ key: aspnet-auth
 
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
-Recently I needed to add multiple JWT as well as Basic authentication to a project. It seems simple, but I did run into some issues when configuring ASP.NET security, so I decided to take a deeper dive into configuring it and share what I learned here.
+This post explores configuring ASP.NET authentication and authorization (AuthN and AuthZ), in particular multiple methods of doing both. ASP.NET makes it easy to add authentication (Who is the user?) and authorization (Can the user do this?) and in most situations, you don't need to worry about the details.
 
-For the case mentioned above, I had a custom JWT provider, Azure Active Directory (AAD) providing JWTs, and Basic authentication all in the same application. In addition, some of the APIs required working with either Basic and AAD JWT authentication. This blog post will focus on the configuration of the authentication and authorization for a simple API and not concerned about securely authenticating a user. In another post I'll talk about issues getting the two JWT providers to work together.
+I do assume you have some knowledge of ASP.NET and how auth works in general.
+
+For the ASP.NET sample app, I added auth to [this](https://github.com/Seekatar/ioptions-logger-test) repo, which was the basis for a TechTalk I gave at work. It also has code for using other .NET features, but this is only about the auth.
+
+This all came about when recently I needed to add multiple JWT as well as Basic authentication to a project. It seemed simple, but I did run into some issues when configuring ASP.NET security, so I decided to take a deeper dive into configuring it and share what I learned here.
+
+In another post, I'll talk about issues getting the two JWT providers to work together.
 
 ## Terminology
 
+Here are some basic and ASP.NET terms that I'll be using in this post.
+
 `Authentication (AuthN)`
-: The process of determining who a user is. There are various ways this is done, such as with an encoded username and password (Basic) or some kind of secure token provided by a third party (e.g Google, Okta, Auth0, or Microsoft).
+: The process of determining who a user is. There are various ways this is done, such as with an encoded username and password (Basic) or some kind of secure token provided by a third party (e.g. Google, Okta, Auth0, or Microsoft).
 
 `Authorization (AuthZ)`
 : The process of determining what a user is allowed to do. This is often done by assigning roles or groups to a user and then checking if the user has the required role to perform an action.
 
 `Scheme`
-: An arbitrary name you give to an authentication method in your app. In this example I have `SchemaA`, `SchemaB`, and `SchemaC`.
+: An arbitrary name you give to an ASP.NET authentication method in your app. In the sample, I have `SchemeA`, `SchemeB`, and `SchemeC`.
 
 `Policy`
-: A policy is a way of authorizing a user. Policies in ASP.NET have various criteria for authorizing a user, such as requiring a role, or certain values for claims, or a specific authentication scheme. This example configures various policies for the API.
+: A policy is a way of authorizing a user. Policies in ASP.NET have various criteria for authorizing a user, such as requiring a role, certain values for claims, or a specific authentication scheme. This sample configures various policies for the API.
 
 `Role`
-: A role is an attribute of an authenticated user often used for authorization. Most of the policies in this example require a role.
+: A role is an attribute of an authenticated user often used for authorization. Most of the policies in this sample require a role.
 
-In this sample, I'm focused on configuring the authentication and authorization for a simple ASP.NET API and not concerned about securely authenticating a user. The implementation of the `AuthenticationHandler` just uses some custom headers for the username and roles. In a real application you'd use something like JWTs (JSON Web Tokens) for authentication.
+## Changes to the Sample App
 
-## The Test
+To test various auth scenarios in the sample ASP.NET app I made the following changes:
 
-For testing I created an API and three authentication schemes to be able to test various scenarios such as requiring two authorizations, or requiring one of two authorizations.
+- Added three authentication Schemes: A, B, and C. These use the same code, just different names.
+- Added an `AuthController` with a bunch of endpoints for testing scenarios, logging output using `ILogger`
+- Updated `Program.cs` to register AuthN and AuthZ.
+- `Program.cs` was already using the middleware: `app.UseAuthentication();` and `app.UseAuthorization();`
+- Added Pester tests to test all the endpoints
 
-### Auth Setup
+## Authenticating User
 
-| Name | AuthZ           | Description         |
-| ---- | --------------- | ------------------- |
-| A    | Always succeeds | Policy included     |
-| B    | Always succeeds | Policy not included |
-| C    | Always fails    |
+> For this sample, I'm focused on configuring the authentication and authorization for an ASP.NET API and not concerned about securely authenticating a user. The implementation of the `AuthenticationHandler` here is just for this test and it is not secure by any means. In a real application, you'd use something like JWTs (JSON Web Tokens) for authentication.
 
-### Test Cases
+Here's the `AuthenticationHandler` implementation I used for this sample. For AuthN, it checks that the user name in a custom header matches the configured name of this handler or a wildcard (`*`). As an AuthN handler, this doesn't do the authorization, but it does add the roles from another custom header to the claims. The claims will be used by ASP.NET to do the authorization as we'll see shortly.
 
-This sample focused on configuring the authentication and authorization for a simple API so the sample `AuthenticationHandler` just uses some custom headers for the username and roles.
-
-| API           | Attribute                                                        | Expected Result                                 |
-| ------------- | ---------------------------------------------------------------- | ----------------------------------------------- |
-| auth/none     | None                                                             | OK for all                                      |
-| auth/a        | `[Authorize(PolicyA)]`                                           | OK for A                                        |
-| auth/b-scheme | `[Authorize(Policy = PolicyB, AuthenticationSchemes = SchemeB)]` | OK for B                                        |
-| auth/a-and-b  | `[Authorize(PolicyA)][Authorize(PolicyB)]`                       | OK when have both A and B                       |
-| auth          | `[Authorize]`                                                    | 500 since no default policy                     |
-| auth/b        | `[Authorize(PolicyB)]`                                           | 500, Error no default policy and none specified |
-| auth/c        | `[Authorize(PolicyC)]`                                           | 403, Unauthorized                               |
-| auth/a-or-b   | `[Authorize(PolicyAOrB)]`                                        | OK for A or B                                   |
-
-## The AuthenticationHandler
-
-Here's the `AuthenticationHandler` I used for this sample. For the AuthN, it checks that the username from a custom header matches the configured name of this handler. This doesn't do the authorization, but it does add the roles from another custom header to the claims. The claims will used by ASP.NET to do the authorization.
+To see what happens during AuthN, it logs out when it succeeds. When it fails, ASP.NET will log for us, so no need to do it here.
 
 ```csharp
 protected override Task<AuthenticateResult> HandleAuthenticateAsync()
 {
-    var user = Context.Request.Headers["X-Test-User"];
-    if (!(user.ElementAtOrDefault(0)?.Equals($"User{Options.Name}", StringComparison.OrdinalIgnoreCase) ?? false))
-        return Task.FromResult(AuthenticateResult.Fail($"'{user.ElementAtOrDefault(0)}' was not 'User{Options.Name}'"));
+    var user = Context.Request.Headers["X-Test-User"].ElementAtOrDefault(0);
+    if (!string.Equals(user, "User*", StringComparison.OrdinalIgnoreCase) &&
+        !(user?.Equals($"User{Options.Name}", StringComparison.OrdinalIgnoreCase) ?? false))
+        return Task.FromResult(AuthenticateResult.Fail($"'{user}' was not 'User{Options.Name}'"));
 
     var claims = new List<Claim>
     {
         new Claim(ClaimTypes.Name, Options.Name),
     };
 
-    var role = Context.Request.Headers["X-Test-Role"];
-    foreach (var rstring in role)
-    {
-        if (rstring is null) continue;
-        foreach (var r in rstring.Split(","))
+    var role = Context.Request.Headers["X-Test-Role"].FirstOrDefault();
+    if (role is not null) {
+        foreach (var r in role.Split(","))
             claims.Add(new Claim(ClaimTypes.Role, r));
     }
+    Logger.LogInformation("Scheme{handlerName} was authenticated. Set claims on {user}: {claims}", Options.Name, 
+                            user, 
+                            string.Join(", ", claims.Select(c => c.Type.Split('/').Last() + " = '" + c.Value + "'")));
+
     var identity = new ClaimsIdentity(claims, ClaimTypes.Name);
     var principal = new ClaimsPrincipal(identity);
     return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, ClaimTypes.Name)));
 }
+
 ```
 
 ## Configuring Authentication
 
-In the startup code, you call `AddAuthentication` to add schemes. In this case I add three implementations of `MyAuthenticationSchemeOptions` with different names. You usually see a string passed into `AddAuthentication` which is the default scheme that will be used if you don't specify one when setting up authorization policies. In this test I don't have a default scheme so I have to specify the scheme in the policy. If you only have one scheme, with .NET 7 it will use that as the default automatically (which is a breaking change from .NET 6 as described [here](https://learn.microsoft.com/en-us/dotnet/core/compatibility/aspnet-core/7.0/default-authentication-scheme))
+In the `Program.cs`, I call call `builder.Services.AddAuthentication` and add schemes to it. You usually see a string passed into `AddAuthentication` which is the default Scheme that will be used if you don't specify one. This sample tests both cases by using a command-line parameter to set the default Scheme.
+
+> If you only have one scheme, with .NET 7, it will use that as the default automatically (which is a breaking change from .NET 6 as described [here](https://learn.microsoft.com/en-us/dotnet/core/compatibility/aspnet-core/7.0/default-authentication-scheme))
+
+In this case, I add three implementations of `CustomAuthenticationHandler` with different Scheme names. (Its `HandleAuthenticateAsync` is above.)
 
 ```csharp
+string? defaultScheme = (args.Length > 0 && args[0].StartsWith("Scheme")) ? args[0] : "";
+
 builder.Services
-    .AddAuthentication() // No default scheme passed in
+    .AddAuthentication(defaultScheme)
     .AddScheme<MyAuthenticationSchemeOptions, CustomAuthenticationHandler>(SchemeA, options => options.Name = NameClaimA )
     .AddScheme<MyAuthenticationSchemeOptions, CustomAuthenticationHandler>(SchemeB, options => options.Name = NameClaimB )
     .AddScheme<MyAuthenticationSchemeOptions, CustomAuthenticationHandler>(SchemeC, options => options.Name = NameClaimC );
@@ -107,47 +110,179 @@ builder.Services
 
 ## Configuring Authorization
 
-In your startup code, you call `AddAuthorization` and configure your policies, usually right after configuring authentication.
+After configuring AuthN, I added the AuthZ configuration code by calling `builder.Services.AddAuthorization` and added policies. I'll use these policies in the controller below to allow access to each method. Policies are optional since you can provide these same details on each controller or controller method, but these allow you to configure AuthZ in one place and keep the controller DRY.
+
+> Note that `RequireAuthenticatedUser` is only needed if you do not supply roles in a policy.??????????
 
 ```csharp
 builder.Services.AddAuthorization(options =>
 {
+    // UserA and RoleA required
     options.AddPolicy(PolicyA, policy =>
         {
-            // Require authenticated user on SchemeA and RoleA
             policy.AddAuthenticationSchemes(SchemeA)
                   .RequireAuthenticatedUser()
                   .RequireRole(RoleA);
         });
+    // UserB required, no scheme specified here so must be specified in [Authorize] attribute if no default
     options.AddPolicy(PolicyB, policy =>
         {
-            // Require authenticated user and RoleA. Note no scheme specified.
             policy.RequireAuthenticatedUser()
                   .RequireRole(RoleB);
         });
+    // UserA or UserB required in RoleA or RoleB
     options.AddPolicy(PolicyAorB, policy =>
         {
-            // Require authenticated user on SchemeA or SchemeB with RoleA or RoleB
             policy.RequireAuthenticatedUser()
                   .AddAuthenticationSchemes(SchemeA, SchemeB)
                   .RequireRole(RoleA, RoleB);
         });
-    options.AddPolicy(PolicyC, policy => {
-            // Require authenticated user (no scheme specified)
-            policy.RequireAuthenticatedUser();
+    // UserA,B,C any role
+    options.AddPolicy(PolicyAnyRole, policy => {
+            policy.RequireAuthenticatedUser()
+                  .AddAuthenticationSchemes(SchemeA, SchemeB, SchemeC);
+        });
+    // UserA and RoleC required
+    options.AddPolicy(PolicyUserAandRoleC, policy => {
+            policy.AddAuthenticationSchemes(SchemeA)
+                  .RequireRole(RoleC);
         });
 });
+
 ```
 
-## The Test Project
-
-## Adding Authentication
+Later in `Program.cs`, the auth middleware is added to do the actual AuthN and AuthZ. Remember that middleware is run in the order they are configured so make sure AuthN is before AuthZ.
 
 ```csharp
+app.UseAuthentication();
+app.UseAuthorization();
+```
+
+## The Controller
+
+Now that auth is thoroughly configured, we can secure the endpoints in the `AuthTestController`. There is an endpoint to test each policy registered above, as well as one without any security, and one to use the default scheme. The `[Authorize]` attribute secures the endpoints. It can be used at the class level if all endpoints are secured the same way, or at the method level to override the class level. In the sample, I use it on each method since they are all different.
+
+| Path          | Attribute                                                        | Expected Result                                  |
+| ------------- | ---------------------------------------------------------------- | ------------------------------------------------ |
+| auth/none     | None                                                             | OK for all                                       |
+| auth/a        | `[Authorize(PolicyA)]`                                           | OK for UserA with role A                         |
+| auth/b-scheme | `[Authorize(Policy = PolicyB, AuthenticationSchemes = SchemeB)]` | OK for UserB with role B                         |
+| auth/a-and-b  | `[Authorize(PolicyA)][Authorize(PolicyB)]`                       | OK if both role A and B                          |
+| auth          | `[Authorize]`                                                    | 500 if no default policy                         |
+| auth/b        | `[Authorize(PolicyB)]`                                           | 500 if no default policy, 200 if default SchemeB |
+| auth/a-or-b   | `[Authorize(PolicyAOrB)]`                                        | OK for role A or B                               |
+| auth/a-role-c | `[Authorize(PolicyUserAandRoleC)]`                               | Ok for UserA with role C                         |
+| auth/any      | `[Authorize(PolicyAnyRole)]`                                     | OK for UserA,B,C,* with any role                 |
+
+## Running the Sample and Tests
+
+To make running and testing the sample easier, there is a `run.ps1` file in the repo. It takes a list of `tasks` for running snippets of PowerShell that run and test the sample. The tests run positive and negative tests against the endpoints. The controller and authN handler log out what is going on so you can see what code is called.
+
+> For testing the API, I call [Pester](https://pester.dev/) to run tests in `auth.tests.ps1`. I always use it for testing APIs. It is simple, powerful, and can be used in CI kicking out standard XML for reporting in Azure DevOps, etc.
+
+For testing without a default authN scheme, run these commands. Since there is no default, several endpoints will return a 500 and you'll see errors in the output, but the tests expect that and will pass.
+
+```powershell
+# in one prompt (this will block)
+.\run.ps1 watch
+
+# in a second prompt, all tests should pass
+.\run.ps1 test
+```
+
+For testing with a default, run these commands. The tests will pass if the default is set to `SchemeA`.
+
+```powershell
+# in one prompt (this will block)
+ .\run.ps1 watch -DefaultAuthScheme SchemeA
+
+# in a second prompt, all tests should pass
+.\run.ps1 testDefault
+```
+
+## Default Authentication
+
+By default, the app uses no default authN scheme, but one can be passed in via the command line (`/run.ps1 watch -DefaultAuthScheme SchemeA` will do it).
+
+The `/auth` endpoint only uses `[Authorize]` and `PolicyB` does not specify a scheme so calling them without a default will get a 500 with this error:
+
+```text
+An unhandled exception has occurred while executing the request.
+System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found. The default schemes can be set using either AddAuthentication(string defaultScheme) or AddAuthentication(Action<AuthenticationOptions> configureOptions).
+```
+
+Setting a default will make those run successfully.
+
+The schemes are evaluated in the order they are registered, and the one set as the default runs first. Below is the log output calling `/any` with a default scheme of `SchemeC`. Since `/any` uses the `PolicyAnyRole` policy that uses schemes A, B, and C, and the default scheme is set to C, it gets called twice.
+
+```text
+>>>> /api/auth/any
+SchemeC was not authenticated. Failure message: 'UserZ' was not 'UserA'
+SchemeA was not authenticated. Failure message: 'UserZ' was not 'UserA'
+SchemeB was not authenticated. Failure message: 'UserZ' was not 'UserB'
+SchemeC was not authenticated. Failure message: 'UserZ' was not 'UserC'
+```
+
+And without a default scheme, only the explicit schemes are called. C is only called once.
+
+```text
+>>>> /api/auth/any
+SchemeA was not authenticated. Failure message: 'UserZ' was not 'UserA'
+SchemeB was not authenticated. Failure message: 'UserZ' was not 'UserB'
+SchemeC was not authenticated. Failure message: 'UserZ' was not 'UserC'
+```
+
+## Multiple Authentication Schemes
+
+You may think that once authenticated, authN stop, but you can see that all schemes are called even when one succeeds. Here `SchemeA` authenticates the user, but B also tries.
+
+```text
+>>>> /api/auth/a-and-b
+SchemeA was authenticated. Set claims on UserA: name = 'A', role = 'A', role = 'B'
+SchemeB was not authenticated. Failure message: 'UserA' was not 'UserB'
+```
+
+Since all schemes, that does mean that if the authentication handler sets claims on the `ClaimPrincipal`, the last one will win. Here's the log when `/any` is called with `UserB` and roles `A,Q`. B matches and sets the name claim.
+
+```text
+>>>> /api/auth/any
+SchemeA was not authenticated. Failure message: 'UserB' was not 'UserA'
+SchemeB was authenticated. Set claims on UserB: name = 'B', role = 'A', role = 'Q'
+SchemeC was not authenticated. Failure message: 'UserB' was not 'UserC'
+GetAuthAnyRole
+    Name claim: B
+    Role: A
+    Role: Q
+    SchemeA
+    SchemeB
+    SchemeC
+
+```
+
+And a similar call using `User*`, who authenticates with _all_ authentication handlers. SchemeA will set Name to A, then B overwrites it to B, and finally, C wins. This is probably not a real-life scenario where multiple schemes would be used to authenticate the same user, but it's good to keep in mind.
+
+```text
+>>>> /api/auth/any
+SchemeA was authenticated. Set claims on User*: name = 'A', role = 'A', role = 'Q'
+SchemeB was authenticated. Set claims on User*: name = 'B', role = 'A', role = 'Q'
+SchemeC was authenticated. Set claims on User*: name = 'C', role = 'A', role = 'Q'
+GetAuthAnyRole
+    Name claim: C
+    Role: A
+    Role: Q
+    Role: A
+    Role: Q
+    Role: A
+    Role: Q
 ```
 
 ## Summary
 
+Writing this sample code and post, I have a better understanding of how authN and authZ work in ASP.NET Core. I hope you do too.
 
 ## Links
 
+- [Source code](https://github.com/Seekatar/ioptions-logger-test)
+- [MS: Overview of ASP.NET Core authentication]([Title](https://learn.microsoft.com/en-us/aspnet/core/security/authentication))
+- [MS: Introduction to authorization in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/introduction)
+- [MS: AuthenticationHandler](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.authenticationhandler-1?view%253Daspnetcore-7.0)
