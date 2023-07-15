@@ -5,7 +5,7 @@ tags:
  - authentication
  - authorization
  - asp.net
-excerpt: Exploring ASP.NET Auth
+excerpt: Exploring ASP.NET Authentication and Authorization configuration
 cover: /assets/images/super-natural-1639059.jpg
 comments: true
 layout: article
