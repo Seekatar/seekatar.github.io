@@ -10,7 +10,7 @@ excerpt: Avoiding error messages when multiple authentication schemes are config
 cover: /assets/images/black-n-green-1177322.jpg
 comments: true
 layout: article
-key: aspnet-auth
+key: aspnet-auth-forwarding
 ---
 
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
