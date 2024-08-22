@@ -1,0 +1,4 @@
+{
+  "MD013": false, // Line length
+  "MD024": false // Allow multiple headers with the same content
+}
