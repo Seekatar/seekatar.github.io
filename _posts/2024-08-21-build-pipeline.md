@@ -5,7 +5,7 @@ tags:
  - yaml
  - pipeline
 excerpt: How to create a pipeline that determines its path at runtime
-cover: /assets/images/leaf-1408533.jpg
+cover: /assets/images/leaf3.png
 comments: true
 layout: article
 key: 20240821

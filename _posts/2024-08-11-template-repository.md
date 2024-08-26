@@ -6,7 +6,7 @@ tags:
  - pipeline
  - featureflags
 excerpt: Moving pipeline logic to a template repository, with feature flags
-cover: /assets/images/leaf-1408533.jpg
+cover: /assets/images/leaf2.png
 comments: true
 layout: article
 key: 20240811

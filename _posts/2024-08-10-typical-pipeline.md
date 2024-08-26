@@ -7,7 +7,7 @@ tags:
  - build
  - deploy
 excerpt: Building a Docker Image and deploying it to Kubernetes via Helm
-cover: /assets/images/leaf-1408533.jpg
+cover: /assets/images/leaf1.png
 comments: true
 layout: article
 key: 20240810
@@ -134,6 +134,7 @@ If you have multiple deployables in the same repository, you can use `paths.incl
 The build only has one job, so I omit `stages`. I could omit `jobs` and just have `steps`, but I like to give the job a name.
 
 ```yaml
+{% raw %}
 jobs:
   - job: build
     displayName: Build
@@ -211,6 +212,7 @@ jobs:
           repository: my-test-api
           command: push
           tags: $(tags)
+{% endraw %}
 ```
 
 [job](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/jobs-job?view=azure-pipelines) has an optional id, which is just `build` in this case. The id can be used to set up dependencies, or get output from one job into another (stay tuned for a later blog post).
@@ -231,7 +233,7 @@ If this was just building a library such as a .NET NuGet or npm package, it woul
 
 > 💁 Brief Lesson on Variable Syntax
 >
-> There are three [syntax](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch#understand-variable-syntax) types used in AzDO YAML. In these examples I use the `template expression` (aka `template`) syntax, which is `${{ ... }}` and the macro syntax, which is `$(...)`.
+> There are three [syntax](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch#understand-variable-syntax) types used in AzDO YAML. In these examples I use the `template expression` (aka `template`) syntax, which is `${{sBrace}} ... {{eBrace}}` and the macro syntax, which is `$(...)`.
 > The `macro` syntax is evaluated at runtime. If you look at the YAML for the pipeline, it will have `$(myName)` in it since it's not until the step is executed that it is replaced with the actual value. If the variable `myname` is not set then `$(myName)` will left in the YAML, which may be what you want if it's in shell script code.
 >
 > The `template` syntax, which I use in the deploy pipeline, is evaluated when the YAML is processed at build time similar to pre-processor directives in a language like C++.
@@ -286,18 +288,22 @@ There are other types of resources, which I'll cover in a later blog post.
 
 #### The Work
 
-Since the deployment yaml to each environment is identical, I use an `${{each}}` loop to deploy to each environment. For any differences between environments that can't be handled by simply using the `env` variable, I include a separate yaml file for each environment.
+{% assign sBrace = '{{' %}
+{% assign eBrace = '}}' %}
+
+Since the deployment yaml to each environment is identical, I use an `${{sBrace}}each{{eBrace}}` loop to deploy to each environment. For any differences between environments that can't be handled by simply using the `env` variable, I include a separate yaml file for each environment.
 
 There's not too much to the deployment, and this sample is stubbed out. In general, a Helm deploy will have the following steps:
 
 1. Get the secrets from the secret store to connect to K8s.
-1. Connect to the K8s cluster.
-1. Replace the placeholders in the `values.yaml` file with the environment-specific values. (Or you can use separate `values-<env>.yaml` files 🤮)
-1. Deploy the Helm chart.
+2. Connect to the K8s cluster.
+3. Replace the placeholders in the `values.yaml` file with the environment-specific values. (Or you can use separate `values-<env>.yaml` files 🤮)
+4. Deploy the Helm chart.
 
 > There is a [Helm task](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/helm-deploy-v0?view=azure-pipelines) but I found that it didn't handle failures very well. If a deploy pipeline failed to deploy to K8s, you just get a timeout. To get better error handling, I wrote a PowerShell module, [K8sUtils](https://www.powershellgallery.com/packages/K8sUtils), that does a Helm install, but captures all the events, and logs from the deploy and fails on the first error. Before even if the deploy failed immediately in K8s, the Helm task would still wait until the timeout before returning. Using module has made life much easier in my current situation.
 
 ```yaml
+{% raw %}
 stages:
 - ${{ each env in parameters.environments }}: # create this stage for each environment
   - stage: deploy_${{ lower(env) }}           # stage names must be unique
@@ -310,7 +316,7 @@ stages:
       - template: DevOps/variables/$(envLower)-environment.yml # What magic is this? See below.
 
     jobs:
-    - job: deploy_${{ envLower }  }           # job names must be unique
+    - job: deploy_${{ envLower }}           # job names must be unique
       displayName: Deploy ${{env }} SC
       pool:
         vmImage: ubuntu-latest
@@ -373,6 +379,7 @@ stages:
             exit 1
           }
         displayName: Deploy $(applicationDeployableName)
+{% endraw %}
 ```
 
 Notice in the variables section there is a `template` keyword. (I'll get more into templates in a later blog post.) In this case, I have a YAML file per environment and using a naming convention I can include the correct one for the each environment. The variables in these files are used to replace the placeholders in the `values.yaml` file avoiding the need for separate `values-<env>.yaml` files.
