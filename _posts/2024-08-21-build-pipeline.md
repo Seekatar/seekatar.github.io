@@ -23,10 +23,10 @@ That sounds pretty scary, but we already had most of our CI/CD in Azure DevOps a
 
 > For all our builds, we want the following to happen:
 >
-> - For a draft PR to master, deploy the build to the blue environment, for any manual testing
-> - For a PR to master, deploy to blue. And deploy to green, run integration tests, then rollback the deployment
+> - For a draft PR to main, deploy the build to the blue environment, for any manual testing
+> - For a PR to main, deploy to blue. And deploy to green, run integration tests, then rollback the deployment
 > - For a push to develop, push to red and run integration tests
-> - For the merge into master, kick off a gated deployment pipeline to production
+> - For the merge into main, kick off a gated deployment pipeline to production
 
 Translating that into a CI/CD pipeline state diagram:
 
@@ -57,12 +57,12 @@ stateDiagram
 
     [*] --> b
 
-    b --> d1 : 1. Draft PR\nmaster
+    b --> d1 : 1. Draft PR\nmain
     d1 --> i1
     i1 --> r1
     r1 --> [*]
 
-    b --> fork : 2. PR\nmaster
+    b --> fork : 2. PR\nmain
     fork --> d2
     d2 --> i2
     i2 --> r2
@@ -78,7 +78,7 @@ stateDiagram
     r4 --> [*]
 
     state "Deploy to Production" as pp
-    b --> e2 : 4. Merge to\nmaster\nor Manual
+    b --> e2 : 4. Merge to\nmain\nor Manual
     e2 --> pp
 
 state pp {
