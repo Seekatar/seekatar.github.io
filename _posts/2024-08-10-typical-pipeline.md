@@ -24,8 +24,7 @@ This is the first in a series of blog posts about creating standard Azure DevOps
 1. [Creating a Dynamic Azure DevOps Pipeline]()
 1. [Azure DevOps Pipeline Tips, Tricks, Gotchas, and Headaches]()
 
-> [!NOTE]
-> I walk through the build and deploy process from the beginning, but I assume you are familiar with the basic application lifecycle concepts for containerized applications.
+> 💁 I walk through the build and deploy process from the beginning, but I assume you are familiar with the basic application lifecycle concepts for containerized applications.
 
 ## The Problem
 
@@ -146,8 +145,7 @@ variables:
 
 [name](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/run-number?view=azure-devops) will be shown in the AzDO UI when the pipeline is run, and is available as a variable in the pipeline that you can use to tags your image, etc. In this example, I have a hard-coded `1.3.` that will be followed by the build number, `$(Rev:r)`. The `$(BuildSuffix)` will be empty unless it is a dry run, in which case it will be `-DRY RUN` to make it obvious in the UI. The [documentation](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/run-number?view=azure-devops#tokens) shows all the various variables you can use in the name, such as parts of the date, etc.
 
-> [!TIP]
-> The `$(Rev:r)` is a build number that is incremented each time the pipeline is run. If you re-create the pipeline, the build number will start over at 1, which can be a problem if you use that to tag your image or library. In that case you'll have to change the hard-coded part of the name.
+> 💁 The `$(Rev:r)` is a build number that is incremented each time the pipeline is run. If you re-create the pipeline, the build number will start over at 1, which can be a problem if you use that to tag your image or library. In that case you'll have to change the hard-coded part of the name.
 
 [parameters](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/parameters?view=azure-pipelines) are values you can set when the pipeline is run manually. A CI run will use the default value, but you can use `parameters` to allow a user to override that value in a one-off run. In this case I allow the user to kick off a build without pushing the Docker image to the registry.
 
