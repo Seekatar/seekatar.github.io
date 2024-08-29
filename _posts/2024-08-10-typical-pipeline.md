@@ -17,10 +17,11 @@ key: 20240810
 
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
-This is the first in a series of blog posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I'll build a containerized .NET API with unit tests and do deployments to multiple environments (faked-out). This first post creates pipelines as one-offs without reusing YAML. The second post will leverage templates to create a reusable library of pipeline steps. The third post will take templates to the next level by creating a dynamic pipeline driven by feature flags.
+This is the first in a series of blog posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I'll build a containerized .NET API with unit tests and do deployments to multiple environments (faked-out). This first post creates pipelines as one-offs without reusing YAML. The second and third posts will leverage templates to create a reusable library of pipeline steps. The fourth post will take templates to the next level by creating a dynamic pipeline driven by feature flags.
 
 1. Typical Build and Deploy Azure DevOps Pipelines (this post)
-1. Moving Azure DevOps Pipelines Logic to a Template Repository (coming soon)
+1. Moving Azure DevOps Build Pipeline Logic to a Template Repository (coming soon)
+1. Moving Azure DevOps Deploy Pipeline Logic to a Template Repository (coming soon)
 1. Creating a Dynamic Azure DevOps Pipeline (coming soon)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
@@ -191,7 +192,7 @@ jobs:
         displayName: 'Checkout source code'
 
       - task: Docker@2
-        displayName: Build and test my-sample-api
+        displayName: Build and test sample-api
         inputs:
           repository: sample-api
           command: build
@@ -225,21 +226,21 @@ jobs:
           codeCoverageTool: 'cobertura'
           summaryFileLocation: $(Agent.TempDirectory)/output/testResults/coverage/coverage.cobertura.xml
 
+      - task: Docker@2
+        displayName: Publish sample-api
+        inputs:
+          repository: sample-api
+          command: build
+          Dockerfile: DevOps/Dockerfile
+          buildContext: ./src
+          tags: $(tags)
+          arguments: --build-arg BUILD_VERSION=$(Build.BuildNumber)
+
       - ${{ if not(parameters.isDryRun) }}:
         - task: Docker@2
-          displayName: Publish my-sample-api
+          displayName: Push sample-api Image to the ACR
           inputs:
-            repository: my-sample-api
-            command: build
-            Dockerfile: $(Agent.TempDirectory)/Dockerfile
-            buildContext: ./src
-            tags: $(tags)
-            arguments: --build-arg BUILD_VERSION=$(Build.BuildNumber)
-
-        - task: Docker@2
-          displayName: Push my-sample-api Image to the ACR
-          inputs:
-            repository: my-sample-api
+            repository: sample-api
             command: push
             tags: $(tags)
 {% endraw %}
