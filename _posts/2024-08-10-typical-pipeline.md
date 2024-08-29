@@ -22,7 +22,7 @@ This is the first in a series of blog posts about creating reusable Azure DevOps
 1. Typical Build and Deploy Azure DevOps Pipelines (this post)
 1. Moving Azure DevOps Pipelines Logic to a Template Repository (coming soon)
 1. Creating a Dynamic Azure DevOps Pipeline (coming soon)
-1. [Azure DevOps Pipeline Tips, Tricks, Gotchas, and Headaches](/2024/08/22/azdo-tat.html)
+1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
 > 💁 I walk through the build and deploy process from the beginning, but I assume you are familiar with the basic application lifecycle concepts for containerized applications. I tried to make this as generic as possible so you can adapt it to your project.
 
@@ -55,10 +55,10 @@ I like to keep the build- and deploy-related files in a `DevOps` folder in the r
 ├── README.md
 ├── run.ps1                # A helper to build, run, etc, locally.
 └── src                    # Context folder for the Docker build
-    ├── test-api.sln
-    ├── test-api           # Source for the test-api .NET Core app
+    ├── sample-api.sln
+    ├── sample-api           # Source for the sample-api .NET Core app
     ├── test
-    │   └── unit           # Unit tests for the test-api
+    │   └── unit           # Unit tests for the sample-api
     └── .dockerignore      # This must be in the Docker context folder
 ```
 
@@ -66,7 +66,7 @@ All my projects have a `run.ps1` file with many CLI snippets to build, run, test
 
 > 💁 Brief Lesson on Pipelines
 >
-> The structure of a pipeline is shown below. By default, `stages` run sequentially, and `jobs` run in parallel, but you can change that via `depends`. If your pipeline only has jobs, you can omit the `stages` section. If it only has `steps`, you can omit the `stages` and `jobs` sections. I use `variables` in the pipelines, which can be defined at the pipeline, `stage`, or `job` scope, and the last one wins.
+> The structure of a pipeline is shown below. ([MS AzDO Concepts](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)) By default, `stages` run sequentially, and `jobs` run in parallel, but you can change that via `depends`. If your pipeline only has jobs, you can omit the `stages` section. If it only has `steps`, you can omit the `stages` and `jobs` sections. I use `variables` in the pipelines, which can be defined at the pipeline, `stage`, or `job` scope, and the last one wins.
 >
 > ```yaml
 > variables:
@@ -146,20 +146,33 @@ variables:
 >
 > In the code above I use two of the three [syntax](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch#understand-variable-syntax) types. The `template expression syntax` (aka `template syntax`), which is `${{sBrace}} ... {{eBrace}}`, and the macro syntax, which is `$(...)`.
 >
-> The `template syntax` is evaluated when the YAML is processed at compile time, similar to pre-processor directives in a language like C++ (#ifdef, #define, etc.). When you view expanded YAML in the AzDO UI, you will never see the template syntax.
+> The `template syntax` is evaluated when the YAML is processed at compile time, similar to pre-processor directives in a language like C++ (#ifdef, #define, etc.). When you view expanded YAML in the AzDO UI, you will never see the template syntax. For the `buildSuffix` variable above, if the `isDryRun` parameter is true, the resulting YAML will be:
 >
-> The `macro` syntax is evaluated at runtime. Variables in macro syntax may not be known at compile time. When you view expanded YAML, it will have `$(myName)` in it since it's not until the step is executed that it is replaced with the actual value. If the variable `myname` doesn't exist at runtime then `$(myName)` will left in the YAML, which may be what you want if it's an inline shell script in a task.
+> ```yaml
+>   - name: buildSuffix
+>     value: '-DRYRUN'
+> ```
 >
+> The `macro` syntax is evaluated at runtime. Variables in macro syntax may not be known at compile time. When you view expanded YAML, it will have `$(myName)` in it since it's not until the step is executed that it is replaced with the actual value. If the variable `myname` doesn't exist at runtime then `$(myName)` will left in the YAML, which may be what you want if it's an inline shell script in a task. For the `tags` variable above, if we're not on the `main` branch the resulting YAML will be:
+>
+> ```yaml
+>   - name: tags
+>     value: "$(Build.BuildId)-prerelease"
+> ```
+>
+> The macro syntax remains in the YAML after it is compiled and at runtime $(Build.BuildId) will be replaced with the actual build number, e.g. `1234-prerelease`.
 
 [name](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/run-number?view=azure-devops) will be shown in the AzDO UI when the pipeline is run, and is available as a variable (`Build.BuildNumber`) in the pipeline that you can use to tag your image, etc. In this example, I have a hard-coded `1.1.` that will be followed by the unique build number, `$(Build.BuildId)`. The `$(BuildSuffix)` will be empty unless it is a dry run, in which case it will be `-DRY RUN` to make it obvious in the UI. The [documentation](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/run-number?view=azure-devops#tokens) shows all the various variables you can use in the name, such as parts of the date, etc.
 
-[parameters](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/parameters?view=azure-pipelines) are values you can set when the pipeline is run manually. A CI run will use the default value, but you can use `parameters` to allow a user to override that value in a one-off run. In this case, I allow the user to kick off a build without pushing the Docker image to the registry, which is handy to make sure a feature branch builds cleanly in AzDO.
+[parameters](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/parameters?view=azure-pipelines) are values you can set when the pipeline is run manually. In the YAML above, a CI run will use the default value for `isDryRun` of 'false'. A user can manually run the pipeline and set it to `true` to build without pushing the Docker image to the registry, which is handy to make sure a feature branch builds cleanly in AzDO. See the [section](#creating-and-running-the-pipelines) below for how parameters are shown in the UI.
 
-[trigger](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/trigger?view=azure-pipelines) and [pr](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/pr?view=azure-pipelines) are configured identically. The `trigger` section tells AzDO when to run the pipeline when code is merged or committed to those branches. As the name suggests, `pr` is for pull requests. You can use `none` to disable the trigger.
+[trigger](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/trigger?view=azure-pipelines) and [pr](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/pr?view=azure-pipelines) are configured identically. The `trigger` section tells AzDO when to run the pipeline when code is merged or committed to those branches. As the name suggests, `pr` is for pull requests.
 
-If you have multiple deployables in the same repository, you can use `paths.include` to include only the source code for that deployable. Take time to get the `paths` right, as you don't want to build and deploy every time someone updates the README or some other code that is not part of the build. If you want to test path `paths.include` and `exclude`, you can temporarily add your feature branch to the `branches.include` list so it is triggered by a commit.
+In the code above, whenever a commit or merge happens for `main`, `develop`, or `releases/*` branches, the pipeline will run. If a PR is created for `main` or `develop`, the pipeline will run. Except for files listed in `paths.exclude`. In all cases those files will not trigger the pipeline.
 
-In the preamble, I use several predefined variables, such as `$(Build.BuildId)` and `$(buldSuffix)`. The former is a [predefined variable](https://learn.microsoft.com/en-us/azure/devops/pipelines/build/variables), of which there are many. The latter is one I set in the `variables` section. The `template syntax` has [conditional statements](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/expressions?view=azure-devops#conditional-insertion), (`if`, `else`, `elseif`) that I use to set the values of the variables depending on other variables. Later blogs will make heavy use of this feature.
+If you have multiple deployables in the same repository, you can use `paths.include` to include only the source code for that deployable. Take time to get the `paths` right, as you don't want to build and deploy every time someone updates the README or some other file that is not part of the build. If you want to test path `paths.include` and `exclude`, you can temporarily add your feature branch to the `branches.include` list so it is triggered by a commit.
+
+In the preamble, I use several variables, such as `$(Build.BuildId)` and `$(buildSuffix)`. The former is a [predefined variable](https://learn.microsoft.com/en-us/azure/devops/pipelines/build/variables), of which there are many. The latter is one I set in the `variables` section using the {{sBrace}}if{{eBrace}} template syntax to conditionally set the value. Later blogs will make heavy use of this feature.
 
 #### The Work
 
@@ -178,9 +191,9 @@ jobs:
         displayName: 'Checkout source code'
 
       - task: Docker@2
-        displayName: Build and test my-test-api
+        displayName: Build and test my-sample-api
         inputs:
-          repository: test-api
+          repository: sample-api
           command: build
           Dockerfile: DevOps/Dockerfile
           buildContext: ./src
@@ -214,9 +227,9 @@ jobs:
 
       - ${{ if not(parameters.isDryRun) }}:
         - task: Docker@2
-          displayName: Publish my-test-api
+          displayName: Publish my-sample-api
           inputs:
-            repository: my-test-api
+            repository: my-sample-api
             command: build
             Dockerfile: $(Agent.TempDirectory)/Dockerfile
             buildContext: ./src
@@ -224,9 +237,9 @@ jobs:
             arguments: --build-arg BUILD_VERSION=$(Build.BuildNumber)
 
         - task: Docker@2
-          displayName: Push my-test-api Image to the ACR
+          displayName: Push my-sample-api Image to the ACR
           inputs:
-            repository: my-test-api
+            repository: my-sample-api
             command: push
             tags: $(tags)
 {% endraw %}
@@ -301,20 +314,20 @@ variables:
 resources:
   pipelines:
   - pipeline: build_pipeline  # a name for accessing the build pipeline, such as runID below
-    source: build_test-api    # MUST match the AzDO build pipeline name
+    source: build_sample-api    # MUST match the AzDO build pipeline name
     trigger:
       branches:
         include:
           - main              # Only trigger a deploy from the main branch build
 ```
 
-[parameters](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/parameters?view=azure-pipelines) in this pipeline has an array of environments to deploy to by default. If run manually, the user can override the list and pick any environment.
+[parameters](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/parameters?view=azure-pipelines) in this pipeline has an array of environments to deploy to by default. If run manually, the user can override the list and pick any environment. See the [section](#creating-and-running-the-pipelines) below for how parameters are shown in the UI.
 
 [trigger](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/trigger?view=azure-pipelines) and [pr](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/pr?view=azure-pipelines) are disabled for the deploy pipeline since we never want to run it when code changes.
 
-[resources.pipelines.pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/resources-pipelines-pipeline?view=azure-pipelines) is how we trigger the deploy pipeline from the build pipeline. The `source` is the name you give the build pipeline when you create it in AzDO. In the `trigger` section I limit running the deploy pipeline only when a `main` branch build is run.
+[resources.pipelines.pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/resources-pipelines-pipeline?view=azure-pipelines) is how we trigger the deploy pipeline from the build pipeline. The `source` is the name you give the build pipeline when you create it in AzDO. In the `trigger` section I limit running the deploy pipeline only when a `main` branch build is run. With this configuration, whenever the `build_sample-api` pipeline successfully runs on the `main` branch, this pipeline will be triggered.
 
-There are other types of resources, which I'll cover in a later blog post.
+There are other types of resources, one of which I'll cover in a later blog post.
 
 #### The Work
 
@@ -338,7 +351,7 @@ stages:
 
     variables:
       - name: appName
-        value: test-api
+        value: sample-api
       - name: envLower
         value: ${{ lower(env) }}
       - name: imageTag  # substituted in values.yaml
@@ -403,13 +416,17 @@ You should create your YAML on a feature branch and test it before merging it in
 1. Run the deploy pipeline. Fix, repeat, until green.
 1. Merge to your main branch!
 
-The run pipeline isn't too exciting since it just has one stage.
+The run pipeline isn't too exciting since it just has one stage and one job. When you view any job in the UI you will see all the steps you have configured in the YAML.
+
+![Build Job](/assets/images/devOpsBlogs/build-job.png)
+
+The `displayName` value is shown for each steps, which is why meaningful names are important. In addition to your steps, they will always be some pre- and post-steps that AzDO runs for you job.
 
 When the deploy pipeline runs you see each stage run in sequence.
 
 ![Deploy Pipeline](/assets/images/devOpsBlogs/deploy-pipeline.png)
 
-If you manually run a pipeline, you can change the values of the parameters.
+If you manually run a pipeline, you can change the values of the parameters. Here's the deploy pipeline's parameters. I can edit the environments to deploy to any combination of red, green, and blue.
 
 ![Manually running the deploy](/assets/images/devOpsBlogs/manual-deploy.png)
 
@@ -448,6 +465,7 @@ Docker documentation:
 
 Azure DevOps documentation:
 
+- [AzDO Key Concepts](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
 - [Run and Build Numbers (pipeline name)](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/run-number?view=azure-devops)
 - [Conditions](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/conditions?view=azure-devops&tabs=yaml%2Cstages)
 - [Predefined Build Variables](https://learn.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml#build-variables-devops-services)
