@@ -17,7 +17,7 @@ key: 20240810
 
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
-This is the first in a series of blog posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I'll build a containerized .NET API with unit tests and do deployments to multiple environments (faked-out). This first post creates pipelines as one-offs without reusing YAML. The second and third posts will leverage templates to create a reusable library of pipeline steps. The fourth post will take templates to the next level by creating a dynamic pipeline driven by feature flags.
+This is the first in a series of blog posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I'll build a containerized .NET API with unit tests and deploys to multiple environments (faked-out). This first post creates pipelines as one-offs without reusing YAML. The second and third posts will leverage templates to create a reusable library of pipeline steps. The fourth post will take templates to the next level by creating a dynamic pipeline driven by feature flags.
 
 1. Typical Build and Deploy Azure DevOps Pipelines (this post)
 1. Moving Azure DevOps Build Pipeline Logic to a Template Repository (coming soon)

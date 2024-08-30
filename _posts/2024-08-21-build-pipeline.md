@@ -16,7 +16,7 @@ key: 20240821
 This is the fourth in a series of blog posts about creating a set of Azure DevOps YAML pipelines to standardize across many projects.
 
 1. [Typical Kubernetes Build and Deploy Azure DevOps Pipelines](/2024/08/10/typical-pipeline.html)
-1. [Moving Azure DevOps Build Pipeline Logic to a Template Repository](/2024/08/11/template-repository.html)
+1. [Moving Azure DevOps Build Pipeline Logic to a Template Repository](/2024/08/11/build-template-repository.html)
 1. Moving Azure DevOps Deploy Pipeline Logic to a Template Repository (coming soon)
 1. Creating a Dynamic Azure DevOps Pipeline (this post)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)

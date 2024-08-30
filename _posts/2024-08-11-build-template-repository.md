@@ -1,20 +1,20 @@
 ---
-title: Using a Template Repository for Azure DevOps Build Pipeline
+title: Moving Azure DevOps Build Pipeline Logic to a Template Repository
 tags:
  - devops
  - yaml
  - pipeline
- - featureflags
-excerpt: Moving pipeline logic to a template repository, with feature flags
+ - templates
+excerpt: Moving build logic to a template repository
 cover: /assets/images/leaf2.png
 comments: true
 layout: article
-key: 20240811
+key: 20240811build
 ---
 
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
-This is the second in a series of blog posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I'll build a containerized .NET API with unit tests and do deployments to multiple environments (faked-out). This first post creates pipelines as one-offs without reusing YAML. The second and third posts will leverage templates to create a reusable library of pipeline steps. The fourth post will take templates to the next level by creating a dynamic pipeline driven by feature flags.
+This is the second in a series of blog posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I'll build a containerized .NET API with unit tests and deploys to multiple environments (faked-out). This first post creates pipelines as one-offs without reusing YAML. The second and third posts will leverage templates to create a reusable library of pipeline YAML. The fourth post will take templates to the next level by creating a dynamic pipeline driven by feature flags.
 
 1. [Typical Kubernetes Build and Deploy Azure DevOps Pipelines](/2024/08/10/typical-pipeline.html)
 1. Moving Azure DevOps Build Pipeline Logic to a Template Repository (this post)
@@ -28,20 +28,20 @@ The YAML, sample source code, and pipelines are all in [this](https://dev.azure.
 
 ## The Problem
 
-Now that I have a nice YAML CI/CD set of pipelines, I want to reuse then across my organization. Many of my applications are similar, and they all deploy to the same environment
+Now that I have a nice set of YAML CI/CD pipelines, I want to reuse them across my organization. Many of my applications are similar, and they all build Docker images.
 
 ## The Solution
 
-In this post, I'll take the build YAML from the previous post, and move chunks of YAML (templates) into a separate repository. Then I can use those chunks in pipelines across my organization. By having one central location, I can make changes and fixes to the shared YAML and have all the pipelines that use it updated.
+In this post, I'll take the build YAML from the previous post, and move chunks of YAML (templates) into a separate repository. Then I can use those chunks in pipelines across my organization. By having one central location, I can make changes and fixes to the shared YAML and all the pipelines that use it get updated.
 
 > 💁 Brief Lesson on Templates
 >
 > [Templates](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&pivots=templates-includes) are chunks of YAML that can be included in other YAML files, similar to `#include` in C++. In this post I'll use the term `template` to refer to `Includes Templates` (I'll cover `Extends Templates` in the next post).
 >
-> Each template contains one type of AzDO object, such as a `stages`, `jobs`, `steps`, or `variables`. One of those keywords will be in each file, and then it can only be used under the same keyword. E.g if the template has `steps` it can only go under `steps` in the calling YAML. Templates can have [parameters](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/template-parameters?view=azure-devops), so you can make them as flexible as possible.
+> Each template contains one type of AzDO object, such as a `stages`, `jobs`, `steps`, or `variables`. One of those keywords will be in each file, and it can only be used under the same keyword. E.g if the template has `steps` it can only go under `steps` in the calling YAML. Templates can have [parameters](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/template-parameters?view=azure-devops), so you can make them as flexible as possible.
 >
 
-I used a template in the first post to pull in the variables for the pipeline. In that case the template was in the same repo as the caller. In this post the templates will be in a separate repo.
+I used a template in the first post to pull in the variables for the pipeline. In that case, the template was in the same repo as the caller. In this post, the templates will be in a separate repo.
 
 ### The Template Repository
 
@@ -75,7 +75,7 @@ jobs:
 
 ### Branching Strategy
 
-Notice when I reference the `azdo-templates` repository, I use a branch name of `releases/v1.0`. The `main` branch of the template repo is always the latest branch, and will be in sync with the highest numbered `releases` branch. The process of making changes to the template is as follows:
+Notice when I reference the `azdo-templates` repository, I use a branch name of `releases/v1.0`. The `main` branch of the template repo is always the latest branch and will be in sync with the highest numbered `releases` branch. The process of making changes to the template is as follows:
 
 1. Make a new branch off `main`
 1. Make changes to the template
@@ -100,9 +100,9 @@ Looking at the build pipeline from the previous example it had the following tas
    1. Publish the Docker image locally
    1. Push the Docker image to the registry
 
-That list of tasks should be what any Docker build runs. Let's see how to make that a `template`. We could make the template a stage, job, or steps. I'll make it steps since that way it can be used in any job. I can always wrap it in a job template if I need to.
+That list of tasks is what any Docker build runs. Let's see how to make that a `template`. We could make the template stages, jobs, or steps. Usually, you want the template library to be a bunch of smaller Lego-like pieces that can be combined into larger templates, or used by themselves. I'll make this one steps so it can be used in any job, or used multiple times in one job. I can always wrap it in a job template if I need to.
 
-The original pipeline had a dry run parameter, so we'll need that. Then since this template will go under `steps` in the calling pipeline, we'll add that to the template.
+The original pipeline had a dry run parameter, so I'll need that. Then since this template will go under `steps` in the calling pipeline, I'll add that to the template.
 
 ```yaml
 parameters:
@@ -112,9 +112,9 @@ parameters:
 steps:
 ```
 
-I don't have a `default` or `displayName` for the parameter, since the name makes it obvious, and it will never be shown in the UI. I'll always want the caller to pass in the parameter, do it has no default.
+I don't have a `default` or `displayName` for the parameter, since the name makes it obvious, and it will never be shown in the UI. I'll always want the caller to pass in the parameter, so it has no default.
 
-In the build pipeline we set the tags variable like this:
+In the build pipeline, I set the tags variable like this:
 
 ```yaml
 {% raw %}
@@ -127,7 +127,7 @@ variables:
 {% endraw %}
 ```
 
-`steps` can't contain `variables` so we can't do the same thing. Instead we'll add another parameter.
+`steps` can't contain `variables` so we can't do the same thing. Instead, we'll add another parameter.
 
 ```yaml
 {% raw %}
@@ -140,9 +140,9 @@ variables:
 {% endraw %}
 ```
 
-Look at that! We used the `template syntax` just like when we defined the variable in the build YAML, but now set the default value for the `tags` parameter and get the same effect. And it can be overridden by the caller. It this is an ok default for the caller, this parameter can be omitted.
+Look at that! I used the `template syntax` just like when we defined the variable in the build YAML, but now I set the default value for the `tags` parameter and get the same effect. And it can be overridden by the caller. This parameter can be omitted if the default values ok for the caller.
 
-> Note that the tags uses macro syntax (runtime) for the default values. If we're not on main the parameter will look like this:
+> Note that `tags` uses macro syntax (runtime) for the default values. If we're not on the main branch, the parameter will look like this:
 >
 > ```yaml
 >  - name: tags
@@ -150,9 +150,9 @@ Look at that! We used the `template syntax` just like when we defined the variab
 >    default: "$(Build.BuildId)-prerelease"
 > ```
 >
-> At runtime the `default` value will be set to the value of `Build.BuildId`, if it isn't passed in as a parameter. Cool 😇 feature or evil 😈 side effect? You decide.
+> At runtime the `default` value will be set to the value of `Build.BuildId` if it isn't passed in as a parameter. Cool 😇 feature or evil 😈 side effect? You decide.
 
-Now let's add the steps from the build pipeline. In the YAML below, I did was copy the `steps` directly from the build pipeline's YAML. Now we need to review this YAML to see if we need to add more parameters.
+Now I’ll add the steps from the build pipeline. In the YAML below, I copied the `steps` from the build pipeline's YAML. Next, I need to review this YAML to see if we need to add more parameters.
 
 ```yaml
 {% raw %}
@@ -216,9 +216,9 @@ steps:
 {% endraw %}
 ```
 
-> A word about `$(tags)`. That will work, as long as the caller has set a variable `tags`. That is the equivalent to to using a global variable, which we all know are evil. It's best to use a parameter instead of macro syntax in a `steps` template. You can use it in `jobs` or `stages` templates, *if* you defined the variable in the template.
+> A word about `$(tags)`. That will work, as long as the caller has set a variable `tags`. That is equivalent to using a global variable, which we all know is evil. It's best to use a parameter instead of macro syntax in a `steps` template. You can use it in `jobs` or `stages` templates, *if* you defined the variable in the template.
 
-Adding a few parameters, clears all that up. If the caller conforms to our typical project layout, the only parameters needed are `isDryRun` and `repositoryName`
+Adding a few parameters clears all that up. If the caller conforms to our typical project layout, the only parameters needed are `isDryRun` and `repositoryName`.
 
 ```yaml
 {% raw %}
@@ -227,17 +227,21 @@ parameters:
   - name: repositoryName
     type: string
 
-  - name: dockerfile
+  - name: tags
     type: string
-    default: 'DevOps/Dockerfile'
+    displayName: Comma-separated tags for the docker image # 👈 displayName tells the expected format
+
+- name: buildNumber
+    type: string
+    default: '$(Build.BuildNumber)'
 
   - name: context
     type: string
     default: './src'
 
-  - name: buildNumber
-    type: string
-    default: '$(Build.BuildNumber)'
+  - name: dockerfile
+      type: string
+      default: 'DevOps/Dockerfile'
 
 steps:
   - checkout: self
@@ -299,22 +303,26 @@ steps:
 {% endraw %}
 ```
 
-What if some apps don't create unit test output, or they have special parameters they need to pass into their build? They can't use this template. But wait! Why not more parameters?
+> Note that the `buildNumber` uses macro syntax (runtime) for the default values. If the caller does not pass in `buildNumber` at runtime, it will use the value of the predefined variable `$(Build.BuildNumber)` You can use any variable that is defined as the default, but as mentioned above, use care with global variables.
 
+What if some apps don't create unit test output or have special parameters to pass into their build? They can't use this template. But wait! Why not add more parameters?
 ```yaml
 {% raw %}
   - name: dockerBuildArguments
     type: string
     displayName: Any additional arguments for docker build
+    default: '--build-arg BUILD_VERSION=$(Build.BuildNumber)'
 
   - name: dockerBuildOutputArguments
     type: string
-    displayName: Any additional arguments for docker output part of build
-    default: --target output --output $(Agent.TempDirectory)/output
+    displayName: Output arguments for docker build, leave empty if no unit test output from Docker
+    default: '--target output --output $(Agent.TempDirectory)/output'
 {% endraw %}
 ```
 
-And then update our Docker tasks to use these parameters. If `buildOutputArguments` is empty we'll totally skip the build and test step.
+I use `displayName` in this case to better explain the parameter.
+
+Next, I update the Docker tasks to use these parameters. If `buildOutputArguments` is empty it will skip the build and test step.
 
 ```yaml
 {% raw %}
@@ -340,7 +348,7 @@ And then update our Docker tasks to use these parameters. If `buildOutputArgumen
       Dockerfile: ${{ parameters.dockerfile }}
       buildContext: ${{ parameters.context }}
       tags: ${{ parameters.tags }}
-      arguments: arguments: ${{ parameters.buildArguments }} # 👈 add arguments
+      arguments: ${{ parameters.buildArguments }} # 👈 add arguments
 
 {% endraw %}
 ```
@@ -392,7 +400,11 @@ variables:
       value: '-DRYRUN'
     ${{ else }}:
       value: ''
-  # ❌ deleted the tags variable, it's now a default parameter in the template
+  - name: tags
+    ${{ if eq(variables['Build.SourceBranchName'],'main') }}:
+      value: "$(Build.BuildId)"
+    ${{ else }}:
+      value: "$(Build.BuildId)-prerelease"
 
 # 👇 add the template repository
 resources:
@@ -414,15 +426,23 @@ jobs:
         parameters:
           isDryRun: ${{ parameters.isDryRun }}
           repositoryName: sample-api
+          tags: $(tags)
           # 👇 these are optional, and I like the defaults
-          # tags: # conditionally set
           # dockerfile: 'DevOps/Dockerfile'
           # context: './src'
           # buildNumber: '$(Build.BuildNumber)'
 {% endraw %}
 ```
 
-Now we can run the build pipeline just as before. The interesting part to this exercise it that the expanded YAML for the templated and non-templated pipelines are the same! We just made the pipeline more reusable. Here's the view of the templated pipeline, and you see all of the steps are the same as the original pipeline.
+Now we can run the build pipeline just as before. The interesting part of this exercise is that the expanded YAML for the templated and non-templated pipelines steps are the same! We just made the YAML reusable. Here's a screen shot of the original pipeline on the left and templated pipeline on the right.
+
+![Comparing two build steps](/assets/images/devOpsBlogs/compare-builds.png)
+
+From the completed job, if you use the kebab menu to `Download logs` and view the expanded YAML the only difference will be the added `resources` section. The `template` keyword is replaced with the steps from the template.
+
+## Summary
+
+In this post, I showed you have to take a build pipeline and create a template from it. Converting any YAML pipeline will follow the same steps. In the next post, I'll do that for the deploy pipeline.
 
 ## Links
 
