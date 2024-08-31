@@ -24,7 +24,7 @@ This is the first in a series of blog posts about creating reusable Azure DevOps
 1. Creating a Build Pipeline Template (coming soon)
 1. Moving Azure DevOps Deploy Pipeline Logic to a Template Repository (coming soon)
 1. Creating a Deploy Pipeline Template (coming soon)
-1. Dynamic Build Pipeline (coming soon)
+1. Dynamic CI/CD Pipeline (coming soon)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
 > 💁 I walk through the build and deploy process from the beginning, but I assume you are familiar with the basic application lifecycle concepts for containerized applications. I tried to make this as generic as possible so you can adapt it to your project.

@@ -21,7 +21,7 @@ This is the second in a series of blog posts about creating reusable Azure DevOp
 1. [CI/CD YAML Pipelines](/2024/08/10/typical-pipeline.html)
 1. Creating a Build Pipeline Template (this post)
 1. Creating a Deploy Pipeline Template (comming soon)
-1. Dynamic Build Pipeline (coming soon)
+1. Dynamic CI/CD Pipeline (coming soon)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
 > 💁 I assume you have read the previous blog and are familiar with the basic application lifecycle concepts for containerized applications.

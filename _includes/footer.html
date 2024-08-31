@@ -34,4 +34,17 @@
       </div>
     </div>
   </div>
+  <!-- added to support mermaid, but ad blockers block it -->
+  {% if page.mermaid %}
+  <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      mermaid.initialize({
+        startOnLoad:true,
+        theme: "default",
+      });
+      window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
+    });
+  </script>
+  {% endif %}
 </footer>
