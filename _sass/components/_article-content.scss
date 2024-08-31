@@ -101,7 +101,7 @@
     & > pre {
       padding: map-get($spacers, 3) 0 map-get($spacers, 3) map-get($spacers, 3);
       margin: 0;
-      background-color: red; // $text-background-color;
+      background-color: $text-background-color;
       border-radius: map-get($base, border-radius);
       & > code {
         display: block;
@@ -218,4 +218,16 @@
       font-weight: map-get($base, font-weight-bold);
     }
   }
+  .image-caption {
+    font-size: 0.8rem;
+    margin-top: -16px;
+    font-style: italic;
+
+  }
+  .image-caption:before {
+    content: "\A";
+    white-space: pre;
+  }
+
+
 }
