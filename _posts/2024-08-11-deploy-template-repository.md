@@ -1,11 +1,13 @@
 ---
-title: Moving Azure DevOps Deploy Pipeline Logic to a Template Repository
+title: Creating a Deploy Pipeline Template
 tags:
  - devops
  - yaml
+ - deploy
  - pipeline
  - template
-excerpt: Moving deploy logic to a template repository
+ - azure-devops
+excerpt: Moving Azure DevOps deploy pipeline logic to a template repository
 cover: /assets/images/leaf6.webp
 comments: true
 layout: article
@@ -16,10 +18,10 @@ key: 20240811
 
 This is the third in a series of blog posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I'll build a containerized .NET API with unit tests and deploys to multiple environments (faked-out). This first post creates pipelines as one-offs without reusing YAML. The second and third posts will leverage templates to create a reusable library of pipeline steps. The fourth post will take templates to the next level by creating a dynamic pipeline driven by feature flags.
 
-1. [Typical Kubernetes Build and Deploy Azure DevOps Pipelines](/2024/08/10/typical-pipeline.html)
-1. [Moving Azure DevOps Build Pipeline Logic to a Template Repository](/2024/08/11/build-template-repository.html)
-1. Moving Azure DevOps Deploy Pipeline Logic to a Template Repository (this post)
-1. [Creating a Dynamic Azure DevOps Pipeline](/2024/08/21/build-pipeline.html)
+1. [CI/CD YAML Pipelines](/2024/08/10/typical-pipeline.html)
+1. [Creating a Build Pipeline Template](/2024/08/11/build-template-repository.html)
+1. Creating a Deploy Pipeline Template (this post)
+1. Dynamic Build Pipeline (coming soon)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
 > 💁 I assume you have read the previous blog and are familiar with the basic application lifecycle concepts for containerized applications.

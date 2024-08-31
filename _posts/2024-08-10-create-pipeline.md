@@ -1,12 +1,12 @@
 ---
-title: Creating a New Azure DevOps Pipeline
+title: Creating a YAML Azure DevOps Pipeline
 tags:
  - devops
  - YAML
  - pipeline
  - create
- - azureDevOps
-excerpt: Step-by-step instructions to create a new pipeline in Azure DevOps.
+ - azure-devops
+excerpt: Step-by-step instructions to create a new YAML pipeline in Azure DevOps.
 cover: /assets/images/leaf5.webp
 comments: true
 layout: article

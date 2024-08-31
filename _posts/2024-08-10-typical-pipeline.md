@@ -1,12 +1,13 @@
 ---
-title: Typical Kubernetes Build and Deploy Azure DevOps Pipelines
+title: CI/CD YAML Pipelines
 tags:
  - devops
  - yaml
  - pipeline
  - build
  - deploy
-excerpt: Building a Docker Image and deploying it
+ - azure-devops
+excerpt: Creating YAML pipelines in Azure DevOps to build a Docker image and deploy it
 cover: /assets/images/leaf1.png
 comments: true
 layout: article
@@ -19,10 +20,11 @@ key: 20240810
 
 This is the first in a series of blog posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I'll build a containerized .NET API with unit tests and deploys to multiple environments (faked-out). This first post creates pipelines as one-offs without reusing YAML. The second and third posts will leverage templates to create a reusable library of pipeline steps. The fourth post will take templates to the next level by creating a dynamic pipeline driven by feature flags.
 
-1. Typical Build and Deploy Azure DevOps Pipelines (this post)
-1. Moving Azure DevOps Build Pipeline Logic to a Template Repository (coming soon)
+1. CI/CD YAML Pipelines (this post)
+1. Creating a Build Pipeline Template (coming soon)
 1. Moving Azure DevOps Deploy Pipeline Logic to a Template Repository (coming soon)
-1. Creating a Dynamic Azure DevOps Pipeline (coming soon)
+1. Creating a Deploy Pipeline Template (coming soon)
+1. Dynamic Build Pipeline (coming soon)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
 > 💁 I walk through the build and deploy process from the beginning, but I assume you are familiar with the basic application lifecycle concepts for containerized applications. I tried to make this as generic as possible so you can adapt it to your project.
@@ -285,6 +287,7 @@ I use `stages` to deploy to red, green, and blue environments sequentially, whic
 The preamble is similar to the build pipeline. The main difference is this is never triggered by a commit, instead it is triggered by the build pipeline, which is added in the `resources` section.
 
 ```yaml
+{% raw %}
 name: '1.1.$(Rev:r)-$(DeploySuffix)'
 
 parameters:
@@ -320,6 +323,7 @@ resources:
       branches:
         include:
           - main              # Only trigger a deploy from the main branch build
+{% endraw %}
 ```
 
 [parameters](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/parameters?view=azure-pipelines) in this pipeline has an array of environments to deploy to by default. If run manually, the user can override the list and pick any environment. See the [section](#creating-and-running-the-pipelines) below for how parameters are shown in the UI.

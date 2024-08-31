@@ -1,5 +1,5 @@
 ---
-title: Creating a Dynamic Azure DevOps Pipeline
+title: Dynamic Build Pipeline
 tags:
  - devops
  - yaml
@@ -15,10 +15,10 @@ key: 20240821
 
 This is the fourth in a series of blog posts about creating a set of Azure DevOps YAML pipelines to standardize across many projects.
 
-1. [Typical Kubernetes Build and Deploy Azure DevOps Pipelines](/2024/08/10/typical-pipeline.html)
-1. [Moving Azure DevOps Build Pipeline Logic to a Template Repository](/2024/08/11/build-template-repository.html)
-1. Moving Azure DevOps Deploy Pipeline Logic to a Template Repository (coming soon)
-1. Creating a Dynamic Azure DevOps Pipeline (this post)
+1. [CI/CD YAML Pipelines](/2024/08/10/typical-pipeline.html)
+1. [Creating a Build Pipeline Template](/2024/08/11/build-template-repository.html)
+1. [Creating a Deploy Pipeline Template](/2024/08/21/deploy-template-repository.html)
+1. Dynamic Build Pipeline (this post)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
 ## The Problem
@@ -99,8 +99,7 @@ state pp {
 }
 ```
 
-> [!NOTE]
-> Each named box represents a stage in the pipeline. The numbers on the arrows are scenarios numbers, which I will refer to throughout this blog.
+> NOTE: Each named box represents a stage in the pipeline. The numbers on the arrows are scenarios numbers, which I will refer to throughout this blog.
 
 And given all that, you know that was not the final word. There would be changes. One of the first things we did was to standardize on the branching, and pipelines. See my [previous blog]() about leveraging a template repository to encapsulate nearly all the pipeline logic.
 
