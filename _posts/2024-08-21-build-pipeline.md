@@ -17,11 +17,12 @@ published: true
 
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
-This is the fourth in a series of blog posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I’ll build a containerized .NET API with unit tests and deploys to multiple environments (faked-out). The first post created pipelines as one-offs without reusing YAML. The second and third posts leveraged templates to create a reusable library of pipeline YAML. This fourth post takes templates to the next level by creating a dynamic pipeline driven by feature flags.
+This is the fifth in a series of posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I'll start with simple CI/CD pipelines and progress to a complex, dynamic pipeline.
 
 1. [CI/CD YAML Pipelines](/2024/08/10/typical-pipeline.html)
 1. [Creating a Build Pipeline Template](/2024/08/11/build-template-repository.html)
 1. [Creating a Deploy Pipeline Template](/2024/08/21/deploy-template-repository.html)
+1. [Using `extends` and "feature flags" in a pipeline](/2024/08/15/extends.html)
 1. Dynamic CI/CD Pipeline (this post)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 

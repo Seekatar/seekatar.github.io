@@ -18,16 +18,16 @@ key: 20240810
 
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
-This is the first in a series of blog posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I'll build a containerized .NET API with unit tests and deploys to multiple environments (faked-out). This first post creates pipelines as one-offs without reusing YAML. The second and third posts will leverage templates to create a reusable library of pipeline steps. The fourth post will take templates to the next level by creating a dynamic pipeline driven by feature flags.
+This is the first in a series of posts about creating reusable Azure DevOps YAML pipelines across many projects. In these posts, I'll start with simple CI/CD pipelines and progress to a complex, dynamic pipeline.
 
 1. CI/CD YAML Pipelines (this post)
-1. Creating a Build Pipeline Template (coming soon)
-1. Moving Azure DevOps Deploy Pipeline Logic to a Template Repository (coming soon)
-1. Creating a Deploy Pipeline Template (coming soon)
-1. Dynamic CI/CD Pipeline (coming soon)
+1. [Creating a Build Pipeline Template](/2024/08/11/build-template-repository.html)
+1. [Creating a Deploy Pipeline Template](/2024/08/21/deploy-template-repository.html)
+1. [Using `extends` and "feature flags" in a pipeline](/2024/08/15/extends.html)
+1. [Dynamic CI/CD Pipeline](/2024/08/21/build-pipeline.html)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
-> 💁 I walk through the build and deploy process from the beginning, but I assume you are familiar with the basic application lifecycle concepts for containerized applications. I tried to make this as generic as possible so you can adapt it to your project.
+> 💁 I assume you are familiar with the basic application lifecycle concepts for containerized applications. I tried to make this as generic as possible so you can adapt it to your project.
 
 The YAML, sample source code, and pipelines are all in [this](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/TypicalPipeline) AzDO Project.
 
@@ -445,7 +445,7 @@ There are some things to know when running the deploy pipeline.
 
 ## Summary
 
-I hope this will help you get started building your own YAML pipelines. This blog has shown one way to get a basic build and deploy up and running as a one-off. In the next post, I'll show how to take this YAML and create reusable `template`s that you can use across many projects.
+I hope this will help you get started building your own YAML pipelines. This post has shown one way to get a basic build and deploy up and running as a one-off. In the next post, I'll show how to take this YAML and create reusable `template`s that you can leverage across many projects.
 
 ## Links
 
