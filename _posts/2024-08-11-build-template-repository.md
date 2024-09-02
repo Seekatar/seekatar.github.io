@@ -102,9 +102,9 @@ Looking at the build pipeline from the previous example it had the following tas
    1. Publish the Docker image locally
    1. Push the Docker image to the registry
 
-That list of tasks is what any Docker build runs. Let's see how to make that a `template`. We could make the template stages, jobs, or steps. Usually, you want the template library to be a bunch of smaller Lego-like pieces that can be combined into larger templates, or used by themselves. I'll make this one steps so it can be used in any job, or used multiple times in one job. I can always wrap it in a job template if I need to.
+That list of tasks is what any Docker build runs. Let's see how to make that a `template`. I could make the `template` a `stage`, `job`, or `steps`. Usually, you want the template library to be a bunch of smaller Lego-like pieces that can be combined into larger templates, or used by themselves. I'll make this one `steps` since that way it can be used in any `job`, or using multiple times in one `job`. I can always wrap it in a `job` template if I need to.
 
-The original pipeline had a dry run parameter, so I'll need that. Then since this template will go under `steps` in the calling pipeline, I'll add that to the template.
+The original pipeline had a dry run parameter, so I'll need that. Then, since this template will go under `steps` in the calling pipeline, I'll add `steps` to the template.
 
 ```yaml
 parameters:
@@ -129,30 +129,7 @@ variables:
 {% endraw %}
 ```
 
-`steps` can't contain `variables` so we can't do the same thing. Instead, we'll add another parameter.
-
-```yaml
-{% raw %}
-  - name: tags
-    type: string
-    ${{ if eq(variables['Build.SourceBranchName'],'main') }}:
-      default: "$(Build.BuildId)"
-    ${{ else }}:
-      default: "$(Build.BuildId)-prerelease"
-{% endraw %}
-```
-
-Look at that! I used the `template syntax` just like when we defined the variable in the build YAML, but now I set the default value for the `tags` parameter and get the same effect. And it can be overridden by the caller. This parameter can be omitted if the default values ok for the caller.
-
-> Note that `tags` uses macro syntax (runtime) for the default values. If we're not on the main branch, the parameter will look like this:
->
-> ```yaml
->  - name: tags
->    type: string
->    default: "$(Build.BuildId)-prerelease"
-> ```
->
-> At runtime the `default` value will be set to the value of `Build.BuildId` if it isn't passed in as a parameter. Cool 😇 feature or evil 😈 side effect? You decide.
+`steps` can't contain `variables` so we can't do the same thing. Instead, we'll add another parameter `tags`. You may think, why can't I set the `default` value for the parameter like I did for the `value` of the variable? Unfortunately, the template syntax is not allowed in `parameters`
 
 Now I’ll add the steps from the build pipeline. In the YAML below, I copied the `steps` from the build pipeline's YAML. Next, I need to review this YAML to see if we need to add more parameters.
 
@@ -170,7 +147,7 @@ steps:
     Dockerfile: DevOps/Dockerfile           # 👈 more hardcoded values that may be ok
     buildContext: ./src                     # 👈
     tags: $(tags)                           # 👈 This is now a parameter
-    # 👇 We can some of these parameters, rely on standards for others
+    # 👇 We can make some of these parameters, rely on standards for others
     arguments: >-
       --build-arg BUILD_VERSION=$(Build.BuildNumber)
       --target build-test-output
@@ -306,8 +283,11 @@ steps:
 ```
 
 > Note that the `buildNumber` uses macro syntax (runtime) for the default values. If the caller does not pass in `buildNumber` at runtime, it will use the value of the predefined variable `$(Build.BuildNumber)` You can use any variable that is defined as the default, but as mentioned above, use care with global variables.
+>
+> Is using macro syntax for default parameters a cool 😇 feature or evil 😈 side effect? You decide.
 
 What if some apps don't create unit test output or have special parameters to pass into their build? They can't use this template. But wait! Why not add more parameters?
+
 ```yaml
 {% raw %}
   - name: dockerBuildArguments

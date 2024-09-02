@@ -361,8 +361,6 @@ stages:
         value: ${{ lower(env) }}
       - name: imageTag  # substituted in values.yaml
         value: $(resources.pipeline.build_pipeline.runID)
-      - name: valueFileName
-        value: values.yaml
 
       # Load the environment variables specific to this environment
       - template: variables/${{ variables.envLower }}-environment.yml
@@ -381,23 +379,24 @@ stages:
       - task: qetza.replacetokens.replacetokens-task.replacetokens@5
         displayName: 'Replacing #{VAR}#. Will error on missing variables'
         inputs:
-          targetFiles: ./DevOps/values.yaml => $(Agent.TempDirectory)/$(valueFileName)
+          targetFiles: ./DevOps/values.yaml => $(Agent.TempDirectory)/values.yaml
           actionOnMissing: fail
 
       - pwsh: |
-          Get-Content $(Agent.TempDirectory)/$(valueFileName)
+          Get-Content $(Agent.TempDirectory)/values.yaml
         displayName: 'Show Helm Values'
 
       - pwsh: |
           if ($env:isDryRun -eq 'true') {
             Write-Host "This is a dry run. No deployment will be done."
           } else {
-            Write-Host "Deploying to $envLower"
+            Write-Host "Deploying to $env:environment"
           }
           Write-Host "This is a fake deployment step. Using K8sUtils and helm is a great way to deploy to Kubernetes"
         displayName: Deploy $(appName)
         env:
           isDryRun: $(isDryRun)
+          environment: $(env)
 {% endraw %}
 ```
 
@@ -405,7 +404,7 @@ This is where YAML really shines. Since each deployment is identical, I can re-u
 
 Since each environment may have different settings, I include different variables for each environment via the `template` keyword under `stage.variables`. (I'll get more into templates in a later blog post.) In this case, I have a YAML file per environment, and using a naming convention (`values-<env>.yaml`) I can include the correct one for each environment. The variables in these files replace the placeholders in the `values.yaml` file avoiding duplicating nearly identical `values.yaml` files.
 
-The replacement step uses a [third-party](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens) task you can install in your AzDO organization. You may use another, or roll your own (like [this](https://gist.github.com/Seekatar/120593de1c6e31eac25bf75ba6aeefc4)). The `./DevOps/values.yaml => $(Agent.TempDirectory)/$(valueFileName)` syntax tells it not to overwrite the original file. I had a problem in one pipeline that did multiple deploys using the same `values.yaml` file. In that case, the second replacement step would do nothing since all the placeholders were already replaced so the second deploy used the first's values.
+The replacement step uses a [third-party](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens) task you can install in your AzDO organization. You may use another, or roll your own (like [this](https://gist.github.com/Seekatar/120593de1c6e31eac25bf75ba6aeefc4)). The `./DevOps/values.yaml => $(Agent.TempDirectory)/values.yaml` syntax tells it not to overwrite the original file. I had a problem in one pipeline that did multiple deploys using the same `values.yaml` file. In that case, the second replacement step would do nothing since all the placeholders were already replaced so the second deploy used the first's values.
 
 The `Show Helm Values` step is a debugging aid. If we had problems in a deployment, by looking at the values file after the substitutions we could often spot it (usually a YAML indenting issue). Alternatively, you could save the file as a pipeline artifact.
 
