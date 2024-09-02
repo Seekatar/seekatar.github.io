@@ -10,7 +10,7 @@ comments: true
 layout: article
 key: 20240821
 mermaid: false
-published: true
+published: false
 ---
 {% assign sBrace = '${{' %}
 {% assign eBrace = '}}' %}
@@ -22,7 +22,7 @@ This is the fifth in a series of posts about creating reusable Azure DevOps YAML
 1. [CI/CD YAML Pipelines](/2024/08/10/typical-pipeline.html)
 1. [Creating a Build Pipeline Template](/2024/08/11/build-template-repository.html)
 1. [Creating a Deploy Pipeline Template](/2024/08/21/deploy-template-repository.html)
-1. [Using `extends` and "feature flags" in a pipeline](/2024/08/15/extends.html)
+1. [Adding "feature flags" to a pipeline](/2024/08/15/feature-flags.html)
 1. Dynamic CI/CD Pipeline (this post)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
@@ -151,7 +151,6 @@ The step gets all the input values, then uses a switch statement to determine wh
 - instead of draft use PR to test to avoid messing with the API call.
 - note that policy in AzDO must be set to trigger PR
 - set the trigger for src and build yaml??
-
 
 In a step you can set a variable for use with the current job, or for use downstream.
 

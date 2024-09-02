@@ -21,8 +21,8 @@ This is the third in a series of posts about creating reusable Azure DevOps YAML
 1. [CI/CD YAML Pipelines](/2024/08/10/typical-pipeline.html)
 1. [Creating a Build Pipeline Template](/2024/08/11/build-template-repository.html)
 1. Creating a Deploy Pipeline Template (this post)
-1. [Using `extends` and "feature flags" in a pipeline](/2024/08/15/extends.html)
-1. [Dynamic CI/CD Pipeline](/2024/08/21/build-pipeline.html)
+1. [Adding "feature flags" to a pipeline](/2024/08/15/feature-flags.html)
+1. Dynamic CI/CD Pipeline (coming soon)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
 > 💁 I assume you have read the previous blogs and are familiar with the basic application lifecycle concepts for containerized applications.
@@ -323,6 +323,9 @@ This deploy pipeline will be triggered by the `build_templated_sample-api` pipel
 In this post, I showed you have to take a deploy pipeline and create a templates from it. Converting any YAML pipeline will follow the same steps. In the next post, I'll create a data-driven pipeline giving users great flexibility, and reusability.
 
 ## Links
+
+- [This sample's source](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/TypicalPipeline) the YAML is in the `DevOps-templated` folder
+- [This sample's Deploy pipeline in Azure DevOps](https://dev.azure.com/MrSeekatar/SeekatarBlog/_build?definitionId=52)
 
 Azure DevOps documentation:
 

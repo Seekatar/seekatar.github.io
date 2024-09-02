@@ -21,8 +21,8 @@ This is the second in a series of posts about creating reusable Azure DevOps YAM
 1. [CI/CD YAML Pipelines](/2024/08/10/typical-pipeline.html)
 1. Creating a Build Pipeline Template (this post)
 1. [Creating a Deploy Pipeline Template](/2024/08/21/deploy-template-repository.html)
-1. [Using `extends` and "feature flags" in a pipeline](/2024/08/15/extends.html)
-1. [Dynamic CI/CD Pipeline](/2024/08/21/build-pipeline.html)
+1. [Adding "feature flags" to a pipeline](/2024/08/15/feature-flags.html)
+1. Dynamic CI/CD Pipeline (coming soon)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
 > 💁 I assume you have read the previous blog and are familiar with the basic application lifecycle concepts for containerized applications.
@@ -428,6 +428,9 @@ From the completed job, if you use the kebab menu to `Download logs` and view th
 In this post, I showed you have to take a build pipeline and create a template from it. Converting any YAML pipeline will follow the same steps. In the next post, I'll do that for the deploy pipeline.
 
 ## Links
+
+- [This sample's source](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/TypicalPipeline) the YAML is in the `DevOps-templated` folder
+- [This sample's Build pipeline in Azure DevOps](https://dev.azure.com/MrSeekatar/SeekatarBlog/_build?definitionId=51)
 
 Azure DevOps documentation:
 
