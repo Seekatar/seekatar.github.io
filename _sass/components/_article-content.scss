@@ -218,4 +218,16 @@
       font-weight: map-get($base, font-weight-bold);
     }
   }
+  .image-caption {
+    font-size: 0.8rem;
+    margin-top: -16px;
+    font-style: italic;
+
+  }
+  .image-caption:before {
+    content: "\A";
+    white-space: pre;
+  }
+
+
 }

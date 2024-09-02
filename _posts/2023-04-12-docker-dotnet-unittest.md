@@ -17,106 +17,6 @@ key: apr-12-2023
 
 > I have updated the BuildKit section below to have a much-improved method of getting output from a build if using BuildKit, which seems to be the future of Docker builds.
 
-## Adding Unit Test to Docker
-
-If you're going to build and publish a Docker image, it makes sense to run your tests in a container. If you run the test outside of the container, you _really_ aren't testing the binary that you'll be deploying. I know, I know, it _should_ be the same, but is your build environment on the build box exactly the same as in the container? Does it have all the same versions of libraries, etc? Probably not.
-
-Also, if you test outside the container, you're building twice, once on the build box for testing, and once in the container, slowing down your build process.
-
-To do testing, I use a multi-stage `Dockerfile` that has build, test, and run stages. It's pretty straightforward as a Dockerfile goes. Here's a typical one.
-
-```dockerfile
-FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
-WORKDIR /app
-
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src
-COPY ["dotnet-console/dotnet-console.csproj", "./dotnet-console/dotnet-console.csproj"]
-COPY ["unit/unit.csproj", "./unit/unit.csproj"]
-COPY ["dotnet-console.sln", "."]
-RUN dotnet restore
-
-COPY . .
-RUN dotnet publish "./dotnet-console/dotnet-console.csproj" -c Release -o /app/publish
-
-FROM build AS test
-WORKDIR /src
-LABEL unittestlayer=true
-WORKDIR /src/unit
-RUN dotnet test --logger "trx;LogFileName=UnitTests.trx" --results-directory /out/testresults /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=/out/testresults/coverage/
-
-FROM base AS final
-COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "dotnet-console.dll"]
-```
-
-You can see there's a build stage that published the dotnet app, a test stage to test the app, and a final stage that is used at runtime.
-
-## Getting the Test Output Locally
-
-To get the test results locally, you can watch the output from the build, or after it completes, copy the output from the container.
-
-```powershell
-$unittestslayerid=$(docker images --filter "label=unittestlayer=true" -q | Select-Object -first 1)
-if ($unittestslayerid) {
-    docker create --name unittestcontainer $unittestslayerid
-    Remove-Item ./testresults/* -Recurse -Force -ErrorAction Ignore
-    docker cp unittestcontainer:/out/testresults .
-    docker stop unittestcontainer
-    docker rm unittestcontainer
-    docker rmi $unittestslayerid
-
-    if (Test-Path ./testresults/UnitTests.trx) {
-        $test = [xml](Get-Content ./testresults/UnitTests.trx -Raw)
-        $finish = [DateTime]::Parse($test.TestRun.Times.finish)
-
-        $test.TestRun.ResultSummary.Counters.passed
-        Write-Output "Test finished at $($finish.ToString("HH:mm:ss"))"
-        Write-Output "  Outcome is: $($test.TestRun.ResultSummary.outcome)"
-        Write-Output "  Success is $($test.TestRun.ResultSummary.Counters.passed)/$($test.TestRun.ResultSummary.Counters.total)"
-    } else {
-        Write-Warning "No output found in ./testresults/testresults/UnitTests.trx"
-    }
-} else {
-    Write-Warning "No image found with label unittestlayer=true"
-}
-```
-
-## Getting the Test Output in Azure DevOps
-
-Like getting the results locally, you pull the content from the container, then use the publish tasks to get them into DevOps for you.
-
-```yaml
-- script: |
-    export unittestslayerid=$(docker images --filter "label=unittestlayer=true" -q)
-    docker create --name unittestcontainer $unittestslayerid
-    docker cp unittestcontainer:/out/testresults ./testresults
-    docker stop unittestcontainer
-    docker rm unittestcontainer
-  displayName: Run unit tests
-  continueOnError: false
-
-- task: PublishTestResults@2
-  displayName: 'Publish Test Results'
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/dockerunittestspiketestresults.xml'
-    searchFolder: '$(System.DefaultWorkingDirectory)/testresults'
-    publishRunAttachments: true
-    failTaskOnFailedTests: true
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/testresults/coverage/coverage.cobertura.xml'
-    reportDirectory: '$(System.DefaultWorkingDirectory)/testresults/coverage/reports'
-  displayName: 'Publish coverage reports'
-```
-
-Yay! Test and code coverage output. [Here's](https://dev.azure.com/MrSeekatar/PipelineTest/_build/results?buildId=657&view=results) the build pipeline for this run.
-
-![test-results](/assets/images/test-success.png)
-
 ## Using BuildKit UPDATED
 
 > This section was updated in June 2023 to use this improved method of getting logs in BuildKit.
@@ -278,6 +178,108 @@ BuildKit-4-stage.Dockerfile
 |                                | n/a      |              |             |                 |
 |                                | n/a      |              |             |                 |
 
+## Adding Unit Test to Docker the Old Way
+
+> This is the text from the original blog post. It's an alternative to the cleaner BuildKit method above.
+
+If you're going to build and publish a Docker image, it makes sense to run your tests in a container. If you run the test outside of the container, you _really_ aren't testing the binary that you'll be deploying. I know, I know, it _should_ be the same, but is your build environment on the build box exactly the same as in the container? Does it have all the same versions of libraries, etc? Probably not.
+
+Also, if you test outside the container, you're building twice, once on the build box for testing, and once in the container, slowing down your build process.
+
+To do testing, I use a multi-stage `Dockerfile` that has build, test, and run stages. It's pretty straightforward as a Dockerfile goes. Here's a typical one.
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ["dotnet-console/dotnet-console.csproj", "./dotnet-console/dotnet-console.csproj"]
+COPY ["unit/unit.csproj", "./unit/unit.csproj"]
+COPY ["dotnet-console.sln", "."]
+RUN dotnet restore
+
+COPY . .
+RUN dotnet publish "./dotnet-console/dotnet-console.csproj" -c Release -o /app/publish
+
+FROM build AS test
+WORKDIR /src
+LABEL unittestlayer=true
+WORKDIR /src/unit
+RUN dotnet test --logger "trx;LogFileName=UnitTests.trx" --results-directory /out/testresults /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=/out/testresults/coverage/
+
+FROM base AS final
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "dotnet-console.dll"]
+```
+
+You can see there's a build stage that published the dotnet app, a test stage to test the app, and a final stage that is used at runtime.
+
+## Getting the Test Output Locally
+
+To get the test results locally, you can watch the output from the build, or after it completes, copy the output from the container.
+
+```powershell
+$unittestslayerid=$(docker images --filter "label=unittestlayer=true" -q | Select-Object -first 1)
+if ($unittestslayerid) {
+    docker create --name unittestcontainer $unittestslayerid
+    Remove-Item ./testresults/* -Recurse -Force -ErrorAction Ignore
+    docker cp unittestcontainer:/out/testresults .
+    docker stop unittestcontainer
+    docker rm unittestcontainer
+    docker rmi $unittestslayerid
+
+    if (Test-Path ./testresults/UnitTests.trx) {
+        $test = [xml](Get-Content ./testresults/UnitTests.trx -Raw)
+        $finish = [DateTime]::Parse($test.TestRun.Times.finish)
+
+        $test.TestRun.ResultSummary.Counters.passed
+        Write-Output "Test finished at $($finish.ToString("HH:mm:ss"))"
+        Write-Output "  Outcome is: $($test.TestRun.ResultSummary.outcome)"
+        Write-Output "  Success is $($test.TestRun.ResultSummary.Counters.passed)/$($test.TestRun.ResultSummary.Counters.total)"
+    } else {
+        Write-Warning "No output found in ./testresults/testresults/UnitTests.trx"
+    }
+} else {
+    Write-Warning "No image found with label unittestlayer=true"
+}
+```
+
+## Getting the Test Output in Azure DevOps
+
+Like getting the results locally, you pull the content from the container, then use the publish tasks to get them into DevOps for you.
+
+```yaml
+- script: |
+    export unittestslayerid=$(docker images --filter "label=unittestlayer=true" -q)
+    docker create --name unittestcontainer $unittestslayerid
+    docker cp unittestcontainer:/out/testresults ./testresults
+    docker stop unittestcontainer
+    docker rm unittestcontainer
+  displayName: Run unit tests
+  continueOnError: false
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results'
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/dockerunittestspiketestresults.xml'
+    searchFolder: '$(System.DefaultWorkingDirectory)/testresults'
+    publishRunAttachments: true
+    failTaskOnFailedTests: true
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/testresults/coverage/coverage.cobertura.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/testresults/coverage/reports'
+  displayName: 'Publish coverage reports'
+```
+
+Yay! Test and code coverage output. [Here's](https://dev.azure.com/MrSeekatar/PipelineTest/_build/results?buildId=657&view=results) the build pipeline for this run.
+
+![test-results](/assets/images/test-success.png)
+
 ## The End
 
 Running in Azure DevOps, most of the Dockerfiles will work. With the update to this blog about BuildKit, I think that's the cleanest and fastest way to do builds.
@@ -287,6 +289,8 @@ Running in Azure DevOps, most of the Dockerfiles will work. With the update to t
 * [My source code for this blog post](https://github.com/Seekatar/dotnet-console) that has a trivial C# app, the Dockerfiles, and build.yml.
 * [My Azure DevOps pipeline](https://dev.azure.com/MrSeekatar/PipelineTest/_build/results?buildId=657&view=results) that gets test output.
 * [Enabling BuildKit in Azure DevOps](https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/containers/build-image?view=azure-devops#how-do-i-set-the-buildkit-variable-for-my-docker-builds)
-* [Build images with BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) on Docker's site
 * [Publishing ASP.NET Core unit test results and code coverage to Azure DevOps using Docker Images](https://medium.com/@harioverhere/running-asp-net-52a6ed92375b) by Haripraghash Subramaniam
 * [Exporting unit test results from a multi-stage docker build](https://kevsoft.net/2021/08/09/exporting-unit-test-results-from-a-multi-stage-docker-build.html) by Kevin Smith where I learned about `--output`
+* [Docker Doc: Build images with BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) on Docker's site
+* [Docker Doc: Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
+* [Docker Doc: Scratch base image](https://docs.docker.com/build/building/base-images/)
