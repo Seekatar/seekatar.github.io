@@ -15,7 +15,7 @@ key: 20240810
 
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
-> This a little helper blog to show how you create a YAML pipeline in Azure DevOps. I reference this in my blog series about YAML pipelines.
+> This a little helper post to show how you create a YAML pipeline in Azure DevOps. I reference this in my blog series about YAML pipelines.
 
 Here are the step-by-step instructions to create a new pipeline in Azure DevOps.
 

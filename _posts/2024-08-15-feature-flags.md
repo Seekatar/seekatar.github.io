@@ -28,15 +28,15 @@ This is the fourth in a series of posts about creating reusable Azure DevOps YAM
 
 ## The Problem
 
-I have some nice templates to encapsulate my build and deploy pipelines. I have some new features to add the pipelines, but I don't want to break the existing pipelines.
+I have some nice templates to encapsulate my build and deploy pipelines. I have some new features to add to the pipelines, but I don't want to break the existing pipelines.
 
 ## The Solution
 
-In this post I'll add integration tests and image scanning to the build pipeline that will only run if a variable (feature flag) is set in caller's variables YAML file. This allows me to have a high-level, standard build pipeline that many project can use without having one-off pipelines for different situations. In my current position, this technique has allowed me to add several new features over time, keeping all the changes in the templates repo and avoiding custom YAML. I've also used this to take care of exception cases.
+In this post, I'll add integration tests and image scanning to the build pipeline that will only run if a variable (feature flag) is set in the caller's variables YAML file. This allows me to have a high-level, standard build pipeline that many projects can use without having one-off pipelines for different situations. In my current position, this technique has allowed me to add several new features over time, keeping all the changes in the templates repo and avoiding custom YAML. I've also used this to take care of exception cases.
 
 ### Image Scanning
 
-[Trivy](https://trivy.dev/) is a container image scanner that detects vulnerabilities in your code, or Docker images. You can install it locally, or run it from a container. By adding it to the build pipeline, I can be more pro-active about vulnerabilities in my images. (Instead of my boss sending me a Vanta report about vulnerabilities in my image.)
+[Trivy](https://trivy.dev/) is a container image scanner that detects vulnerabilities in your code or Docker images. You can install it locally, or run it from a container. By adding it to the build pipeline, I can be more proactive about vulnerabilities in my images. (Instead of my boss sending me a Vanta report about vulnerabilities in my image.)
 
 In the pipeline, I'll run it in a container to avoid customizing the build agent. Instead of adding the steps to the build pipeline, I'll create a template and call the template from the build pipeline. I'll run the Trivy scan, then use PowerShell to process the output and setting the result of the build based on the results.
 
@@ -114,7 +114,7 @@ steps:
             Write-Host "##vso[task.logissue type=error]High vulnerabilities found in image $env:image"
             Write-Host "##vso[task.complete result=Failed;]"
         } else {
-            Write-Host "##vso[task.logissue type=warning]Fixed vulnerabilities found in image $env:image"
+            Write-Host "##vso[task.logissue type=warning]Fixable vulnerabilities found in image $env:image"
             Write-Host "##vso[task.complete result=SucceededWithIssues;]"
         }
       } else {
@@ -131,9 +131,9 @@ steps:
 {% endraw %}
 ```
 
-The Docker command runs Trivy against the image we have built locally and writes the results to a JSON file in the agent's temp directory. The `--ignore-unfixed` parameter tells Trivy not to report on vulnerabilities which do not have fixes, since I don't want to annoy developers with non-actionable warnings. The PowerShell script processes the JSON to create a concise report. It will also set the step's result to warning, and if there are HIGH or CRITICAL and the `failIfHigh` parameter is set to true, it will fail the step and the pipeline. It sets these results via the [logging commands](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash) `task.logIssue` and `task.complete`.
+The Docker command runs Trivy against the locally built image and writes the results to a JSON file in the agent's temp directory. The `--ignore-unfixed` parameter tells Trivy not to report on vulnerabilities that do not have fixes, since I don't want to annoy developers with non-actionable warnings. The PowerShell script processes the JSON to create a concise report. It will also set the step's result to warning, and if there are HIGH or CRITICAL and the `failIfHigh` parameter is set to true, it will fail the step and the pipeline. It sets these results via the [logging commands](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash) `task.logIssue` and `task.complete`.
 
-I could add these steps to the end of the `steps/build.yml` template file, but instead I'll create a job template that will call two templates.
+I could add these steps to the end of the `steps/build.yml` template file, but instead, I'll create a job template that will call two templates.
 
 ```yaml
 {% raw %}
@@ -202,7 +202,7 @@ jobs:
 {% endraw %}
 ```
 
-To opt-into the image scanning for the example, I added `variables/common.yml` and turned on Trivy as shown below. I like to provide a sample `common.yml` with all possible values they can use, with the values commented out, similar to many Linux configuration files.
+To opt into the image scanning for the example, I added `variables/common.yml` and turned on Trivy as shown below. I like to provide a sample `common.yml` with all possible values they can use, with the values commented out, similar to many Linux configuration files.
 
 ```yaml
 # overrides of template variables
@@ -221,22 +221,40 @@ variables:
   #   value: 'HIGH'
 ```
 
-Hopefully when you run the scan, you'll get a green build and output will be similar to this:
+Since I used the template syntax to conditionally include the steps, `{{sBrace}}if{{eBrace}}`, they will not even show up in the pipeline if you haven't opted in. Here are two runs, one with the scan and one without. (In the next post I'll skip steps instead of excluding them.)
+
+![Including steps](/assets/images/devOpsBlogs/scan-steps.png)
+
+Hopefully, when you run the scan, you'll get a green build, and output will be similar to this:
 
 ```plaintext
-Generating script.
-========================== Starting Command Output ===========================
-/usr/bin/pwsh -NoLogo -NoProfile -NonInteractive -Command . '/home/vsts/work/_temp/af4c93c6-7794-492c-9a8f-6e054820f3af.ps1'
 No fixable vulnerabilities found in image sample-api:1154-prerelease
 
 Finishing: Process scan output
 ```
 
+If you have vulnerabilities, the step, job, and stage will be marked with a warning.
+
+![Warning step](/assets/images/devOpsBlogs/scan-warning.png)
+
+The output will be similar to this:
+
+```plaintext
+Severity VulnerabilityID PkgName                   Status       InstalledVersion        FixedVersion   PrimaryURL
+-------- --------------- -------                   ------       ----------------        ------------   ----------
+MEDIUM   CVE-2024-29992  Azure.Identity            fixed        1.10.4                  1.11.0         https://avd.aquasec.com/nvd/cve-2024-29992
+MEDIUM   CVE-2024-35255  Azure.Identity            fixed        1.10.4                  1.11.4         https://avd.aquasec.com/nvd/cve-2024-35255
+MEDIUM   CVE-2024-35255  Microsoft.Identity.Client fixed        4.56.0                  4.60.4, 4.61.3 https://avd.aquasec.com/nvd/cve-2024-35255
+
+
+##[warning]Fixable vulnerabilities found in image sample-app:dev-138545
+```
+
 ## Summary
 
-In this post I showed you how to add a feature to a template that can be opted into by by setting a variable in the caller's file. This technique does require some planning of your templates, but once in place you can easily add new features, or behavior to a pipeline without changing the callers pipeline.
+In this post, I showed you how to add a feature to a template that can be opted into by setting a variable in the caller's file. This technique does require some planning of your templates, but once in place you can easily add new features, or behavior to a pipeline without changing the caller's pipeline.
 
-In the next post I'll show how to create a dynamic pipeline that determines what stages and jobs run based on variables at runtime.
+In the next post, I'll show how to create a dynamic pipeline that determines what stages and jobs run based on variables at runtime.
 
 ## Links
 

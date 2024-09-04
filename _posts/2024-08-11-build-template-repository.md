@@ -25,7 +25,7 @@ This is the second in a series of posts about creating reusable Azure DevOps YAM
 1. Dynamic CI/CD Pipeline (coming soon)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
-> 💁 I assume you have read the previous blog and are familiar with the basic application lifecycle concepts for containerized applications.
+> 💁 I assume you have read the previous post and are familiar with the basic application lifecycle concepts for containerized applications.
 
 The YAML, sample source code, and pipelines are all in [this](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/TypicalPipeline) AzDO Project.
 
@@ -103,7 +103,7 @@ Looking at the build pipeline from the previous example it had the following tas
    1. Publish the Docker image locally
    1. Push the Docker image to the registry
 
-That list of tasks is what any Docker build runs. Let's see how to make that a `template`. I could make the `template` a `stage`, `job`, or `steps`. Usually, you want the template library to be a bunch of smaller Lego-like pieces that can be combined into larger templates, or used by themselves. I'll make this one `steps` since that way it can be used in any `job`, or using multiple times in one `job`. I can always wrap it in a `job` template if I need to.
+That list of tasks is what any Docker build runs. Let's see how to make that a `template`. I could make the `template` a `stage`, `job`, or `steps`. Usually, you want the template library to be a bunch of smaller Lego-like pieces that can be combined into larger templates, or used by themselves. I'll make this one `steps` since that way it can be used in any `job`, or used multiple times in one `job`. I can always wrap it in a `job` template if I need to.
 
 The original pipeline had a dry run parameter, so I'll need that. Then, since this template will go under `steps` in the calling pipeline, I'll add `steps` to the template.
 
@@ -417,7 +417,7 @@ jobs:
 {% endraw %}
 ```
 
-Now we can run the build pipeline just as before. The interesting part of this exercise is that the expanded YAML for the templated and non-templated pipelines steps are the same! We just made the YAML reusable. Here's a screen shot of the original pipeline on the left and templated pipeline on the right.
+Now we can run the build pipeline just as before. The interesting part of this exercise is that the expanded YAML for the templated and non-templated pipelines steps are the same! We just made the YAML reusable. Here's a screenshot of the original pipeline on the left and templated pipeline on the right.
 
 ![Comparing two build steps](/assets/images/devOpsBlogs/compare-builds.png)
 

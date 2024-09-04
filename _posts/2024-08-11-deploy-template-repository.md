@@ -107,7 +107,7 @@ stages:
 {% endraw %}
 ```
 
-Since much of the deploy is stubbed out, there's not too replace. Some of the hard-coded values are now parameters. Note that the `replacetokens` task uses current environment variables, like `imageTag` for substitution. I could pass that in as a parameter instead, but then I'd have to add a step to set it as a variable, too, so bend the global variable rule a bit. In the next blog, I'll show a better (different) solution. Here is the `steps` template:
+Since much of the deploy is stubbed out, there's not much to replace. Some of the hard-coded values are now parameters. Note that the `replacetokens` task uses current environment variables, like `imageTag` for substitution. I could pass that in as a parameter instead, but then I'd have to add a step to set it as a variable, too, so bend the global variable rule a bit. In the next post, I'll show a better (different) solution. Here is the `steps` template:
 
 ```yaml
 {% raw %}
@@ -194,7 +194,7 @@ jobs:
 {% endraw %}
 ```
 
-The `stages` template has the `environments` parameter. It loops over them create a `stage` that calls the `jobs/deploy.yml` template. It also creates the `imageTag` variable, which will be used as a replacement in the `values.yaml` file later on. I'll discuss the variable template below.
+The `stages` template has the `environments` parameter. It loops over them to create a `stage` that calls the `jobs/deploy.yml` template. It also creates the `imageTag` variable, which will be used as a replacement in the `values.yaml` file later on. I'll discuss the variable template below.
 
 ```yaml
 {% raw %}
@@ -247,7 +247,7 @@ stages:
 {% endraw %}
 ```
 
-In the original deploy pipeline we used a template to pull in variables in our repo. To be able to do the same thing in the template I use the `@self` suffix, which tells AzDO that instead of loading the template from this repository, load it from the caller's repository. Of course, the caller *must* have a file that matches that path, or the pipeline will fail to start. This is where breaking up the templates could be useful. If an app wanted to get variables differently, it could and still use the job template.
+In the original deploy pipeline, we used a template to pull in variables in our repo. To be able to do the same thing in the template I use the `@self` suffix, which tells AzDO that instead of loading the template from this repository, load it from the caller's repository. Of course, the caller *must* have a file that matches that path, or the pipeline will fail to start. This is where breaking up the templates could be useful. If an app wanted to get variables differently, it could and still use the job template.
 
 ### Calling the Deploy Template
 
@@ -289,7 +289,7 @@ variables:
 resources:
   pipelines:
   - pipeline: build_pipeline  # a name for accessing the build pipeline, such as runID below
-    # 👇 different for the the templated deploy to trigger off templated build
+    # 👇 different for the templated deploy to trigger off templated build
     source: build_templated_sample-api  # MUST match the AzDO build pipeline name
     trigger:
       branches:
@@ -314,13 +314,13 @@ stages:
 {% endraw %}
 ```
 
-This deploy pipeline will be triggered by the `build_templated_sample-api` pipeline and run the same steps as before, only now they are in a reusable template. Here's a screen shot of the original pipeline on the left and templated pipeline on the right. Both have the same stages,  jobs, and steps.
+This deploy pipeline will be triggered by the `build_templated_sample-api` pipeline and run the same steps as before, only now they are in a reusable template. Here's a screenshot of the original pipeline on the left and the templated pipeline on the right. Both have the same stages,  jobs, and steps.
 
 ![Comparing two deploy runs](/assets/images/devOpsBlogs/compare-deploys.png)
 
 ## Summary
 
-In this post, I showed you have to take a deploy pipeline and create a templates from it. Converting any YAML pipeline will follow the same steps. In the next post, I'll create a data-driven pipeline giving users great flexibility, and reusability.
+In this post, I showed you have to take a deploy pipeline and create a template from it. Converting any YAML pipeline will follow the same steps. In the next post, I'll create a data-driven pipeline giving users great flexibility, and reusability.
 
 ## Links
 
