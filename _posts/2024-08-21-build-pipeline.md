@@ -287,6 +287,9 @@ stages:
       )
 ```
 
+Here's a pipeline that ran with the integration test failing, but the rollback still running.
+
+![failed-test](/assets/images/devOpsBlogs/failed-test.png)
 
 ## Summary
 
