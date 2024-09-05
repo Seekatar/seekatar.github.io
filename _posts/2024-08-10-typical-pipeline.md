@@ -24,7 +24,7 @@ This is the first in a series of posts about creating reusable Azure DevOps YAML
 1. [Creating a Build Pipeline Template](/2024/08/11/build-template-repository.html)
 1. [Creating a Deploy Pipeline Template](/2024/08/21/deploy-template-repository.html)
 1. [Adding "feature flags" to a pipeline](/2024/08/15/feature-flags.html)
-1. Dynamic CI/CD Pipeline (coming soon)
+1. [Dynamic CI/CD Pipeline](/2024/08/21/build-pipeline.html)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
 > 💁 I assume you are familiar with the basic application lifecycle concepts for containerized applications. I tried to make this as generic as possible so you can adapt it to your project.
@@ -89,7 +89,7 @@ All my projects have a `run.ps1` file with many CLI snippets to build, run, test
 
 ### The Build Pipeline
 
-The build pipeline gets the source code, builds the Docker image, and pushes it to the container registry (if not a dry run). The build and unit tests are run in a multi-stage Dockerfile. See my blog post on [unit tests in Docker](/2023/04/12/docker-dotnet-unittest.html).
+The build pipeline gets the source code, builds the Docker image, and pushes it to the container registry (if not a dry run). The build and unit tests are run in a multi-stage Dockerfile. See my post on [unit tests in Docker](/2023/04/12/docker-dotnet-unittest.html).
 
 #### Preamble
 
@@ -149,14 +149,14 @@ variables:
 >
 > In the code above I use two of the three [syntax](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch#understand-variable-syntax) types. The `template expression syntax` (aka `template syntax`), which is `${{sBrace}} ... {{eBrace}}`, and the macro syntax, which is `$(...)`.
 >
-> The `template syntax` is evaluated when the YAML is processed at compile time, similar to pre-processor directives in a language like C++ (#ifdef, #define, etc.). When you view expanded YAML in the AzDO UI, you will never see the template syntax. For the `buildSuffix` variable above, if the `isDryRun` parameter is true, the resulting YAML will be:
+> The `template syntax` is evaluated when the YAML is processed at compile-time, similar to pre-processor directives in a language like C++ (#ifdef, #define, etc.). When you view expanded YAML in the AzDO UI, you will never see the template syntax. For the `buildSuffix` variable above, if the `isDryRun` parameter is true, the resulting YAML will be:
 >
 > ```yaml
 >   - name: buildSuffix
 >     value: '-DRYRUN'
 > ```
 >
-> The `macro` syntax is evaluated at runtime. Variables in macro syntax may not be known at compile time. When you view expanded YAML, it will have `$(myName)` in it since it's not until the step is executed that it is replaced with the actual value. If the variable `myname` doesn't exist at runtime then `$(myName)` will left in the YAML, which may be what you want if it's an inline shell script in a task. For the `tags` variable above, if we're not on the `main` branch the resulting YAML will be:
+> The `macro` syntax is evaluated at runtime. Variables in macro syntax may not be known at compile-time. When you view expanded YAML, it will have `$(myName)` in it since it's not until the step is executed that it is replaced with the actual value. If the variable `myname` doesn't exist at runtime then `$(myName)` will left in the YAML, which may be what you want if it's an inline shell script in a task. For the `tags` variable above, if we're not on the `main` branch the resulting YAML will be:
 >
 > ```yaml
 >   - name: tags
@@ -248,7 +248,7 @@ jobs:
 {% endraw %}
 ```
 
-[job](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/jobs-job?view=azure-pipelines) has an optional id, which is just `build` in this case. The id can be used to set up dependencies, or get output from one job into another (stay tuned for a later blog post).
+[job](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/jobs-job?view=azure-pipelines) has an optional id, which is just `build` in this case. The id can be used to set up dependencies, or get output from one job into another (stay tuned for a later post).
 
 [pool](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/pool?view=azure-pipelines) is the agent pool (Virtual Machine type) this job will run on. All the steps in this job run on the same agent (VM) in sequence. Often a company will have its own agent pool of VMs with particular software installed, networks access, etc.
 
@@ -332,7 +332,7 @@ resources:
 
 [resources.pipelines.pipeline](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/resources-pipelines-pipeline?view=azure-pipelines) is how we trigger the deploy pipeline from the build pipeline. The `source` is the name you give the build pipeline when you create it in AzDO. In the `trigger` section I limit running the deploy pipeline only when a `main` branch build is run. With this configuration, whenever the `build_sample-api` pipeline successfully runs on the `main` branch, this pipeline will be triggered.
 
-There are other types of resources, one of which I'll cover in a later blog post.
+There are other types of resources, one of which I'll cover in a later post.
 
 #### The Work
 
@@ -402,7 +402,7 @@ stages:
 
 This is where YAML really shines. Since each deployment is identical, I can re-use the YAML by using an `${{sBrace}}each{{eBrace}}` loop. The `parameters.environments` is an array of environments to deploy to, which can be overridden for manually deploying to any environment. Inside the loop, the `stage` is replicated and the `env` variable will have the name of the current environment.
 
-Since each environment may have different settings, I include different variables for each environment via the `template` keyword under `stage.variables`. (I'll get more into templates in a later blog post.) In this case, I have a YAML file per environment, and using a naming convention (`values-<env>.yaml`) I can include the correct one for each environment. The variables in these files replace the placeholders in the `values.yaml` file avoiding duplicating nearly identical `values.yaml` files.
+Since each environment may have different settings, I include different variables for each environment via the `template` keyword under `stage.variables`. (I'll get more into templates in a later post.) In this case, I have a YAML file per environment, and using a naming convention (`values-<env>.yaml`) I can include the correct one for each environment. The variables in these files replace the placeholders in the `values.yaml` file avoiding duplicating nearly identical `values.yaml` files.
 
 The replacement step uses a [third-party](https://marketplace.visualstudio.com/items?itemName=qetza.replacetokens) task you can install in your AzDO organization. You may use another, or roll your own (like [this](https://gist.github.com/Seekatar/120593de1c6e31eac25bf75ba6aeefc4)). The `./DevOps/values.yaml => $(Agent.TempDirectory)/values.yaml` syntax tells it not to overwrite the original file. I had a problem in one pipeline that did multiple deploys using the same `values.yaml` file. In that case, the second replacement step would do nothing since all the placeholders were already replaced so the second deploy used the first's values.
 
@@ -452,7 +452,7 @@ I hope this will help you get started building your own YAML pipelines. This pos
 - [This sample's source](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/TypicalPipeline)
 - [This sample's Build pipeline in Azure DevOps](https://dev.azure.com/MrSeekatar/SeekatarBlog/_build?definitionId=49)
 - [This sample's Deploy pipeline in Azure DevOps](https://dev.azure.com/MrSeekatar/SeekatarBlog/_build?definitionId=50)
-- [Running .NET Unit tests in Docker](https://seekatar.github.io/2023/04/12/docker-dotnet-unittest.html) my blog post on how I run unit tests in Docker and get output.
+- [Running .NET Unit tests in Docker](https://seekatar.github.io/2023/04/12/docker-dotnet-unittest.html) my post on how I run unit tests in Docker and get output.
 
 Gists:
 

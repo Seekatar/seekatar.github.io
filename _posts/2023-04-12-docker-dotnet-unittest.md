@@ -180,7 +180,7 @@ BuildKit-4-stage.Dockerfile
 
 ## Adding Unit Test to Docker the Old Way
 
-> This is the text from the original blog post. It's an alternative to the cleaner BuildKit method above.
+> This is the text from the original post. It's an alternative to the cleaner BuildKit method above.
 
 If you're going to build and publish a Docker image, it makes sense to run your tests in a container. If you run the test outside of the container, you _really_ aren't testing the binary that you'll be deploying. I know, I know, it _should_ be the same, but is your build environment on the build box exactly the same as in the container? Does it have all the same versions of libraries, etc? Probably not.
 
@@ -286,7 +286,7 @@ Running in Azure DevOps, most of the Dockerfiles will work. With the update to t
 
 ## Links
 
-* [My source code for this blog post](https://github.com/Seekatar/dotnet-console) that has a trivial C# app, the Dockerfiles, and build.yml.
+* [My source code for this post](https://github.com/Seekatar/dotnet-console) that has a trivial C# app, the Dockerfiles, and build.yml.
 * [My Azure DevOps pipeline](https://dev.azure.com/MrSeekatar/PipelineTest/_build/results?buildId=657&view=results) that gets test output.
 * [Enabling BuildKit in Azure DevOps](https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/containers/build-image?view=azure-devops#how-do-i-set-the-buildkit-variable-for-my-docker-builds)
 * [Publishing ASP.NET Core unit test results and code coverage to Azure DevOps using Docker Images](https://medium.com/@harioverhere/running-asp-net-52a6ed92375b) by Haripraghash Subramaniam
