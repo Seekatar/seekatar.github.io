@@ -24,7 +24,7 @@ This is the first in a series of posts about creating reusable Azure DevOps YAML
 1. [Creating a Build Pipeline Template](/2024/08/11/build-template-repository.html)
 1. [Creating a Deploy Pipeline Template](/2024/08/21/deploy-template-repository.html)
 1. [Adding "feature flags" to a pipeline](/2024/08/15/feature-flags.html)
-1. Dynamic CI/CD Pipeline (coming soon)
+1. [Dynamic CI/CD Pipeline](/2024/08/21/build-pipeline.html)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
 > 💁 I assume you are familiar with the basic application lifecycle concepts for containerized applications. I tried to make this as generic as possible so you can adapt it to your project.

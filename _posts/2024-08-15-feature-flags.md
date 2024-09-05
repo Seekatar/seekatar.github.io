@@ -23,7 +23,7 @@ This is the fourth in a series of posts about creating reusable Azure DevOps YAM
 1. [Creating a Build Pipeline Template](/2024/08/11/build-template-repository.html)
 1. [Creating a Deploy Pipeline Template](/2024/08/21/deploy-template-repository.html)
 1. Adding "feature flags" to a pipeline (this post)
-1. Dynamic CI/CD Pipeline (coming soon)
+1. [Dynamic CI/CD Pipeline](/2024/08/21/build-pipeline.html)
 1. [Azure DevOps Pipeline Tips and Tricks](/2024/08/22/azdo-tat.html)
 
 ## The Problem
