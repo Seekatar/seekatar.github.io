@@ -326,6 +326,7 @@ In this post, I showed you have to take a deploy pipeline and create a template 
 
 - [This sample's source](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/TypicalPipeline) the YAML is in the `DevOps-templated` folder
 - [This sample's Deploy pipeline in Azure DevOps](https://dev.azure.com/MrSeekatar/SeekatarBlog/_build?definitionId=52)
+- [The template repo](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/azdo-templates)
 
 Azure DevOps documentation:
 

@@ -258,9 +258,9 @@ In the next post, I'll show how to create a dynamic pipeline that determines wha
 
 ## Links
 
-- [This sample's source](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/TypicalPipeline) The DevOps files are in the
+- [This sample's source](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/TypicalPipeline) The DevOps files are in the DevOps-feature-flags folder.
 - [This sample's Build pipeline in Azure DevOps](https://dev.azure.com/MrSeekatar/SeekatarBlog/_build?definitionId=53)
-
+- [The template repo](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/azdo-templates)
 - [Trivy](https://trivy.dev/) vulnerability scanner
 
 Azure DevOps documentation:

@@ -431,6 +431,7 @@ In this post, I showed you have to take a build pipeline and create a template f
 
 - [This sample's source](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/TypicalPipeline) the YAML is in the `DevOps-templated` folder
 - [This sample's Build pipeline in Azure DevOps](https://dev.azure.com/MrSeekatar/SeekatarBlog/_build?definitionId=51)
+- [The template repo](https://dev.azure.com/MrSeekatar/SeekatarBlog/_git/azdo-templates)
 
 Azure DevOps documentation:
 

@@ -149,14 +149,14 @@ variables:
 >
 > In the code above I use two of the three [syntax](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch#understand-variable-syntax) types. The `template expression syntax` (aka `template syntax`), which is `${{sBrace}} ... {{eBrace}}`, and the macro syntax, which is `$(...)`.
 >
-> The `template syntax` is evaluated when the YAML is processed at compile time, similar to pre-processor directives in a language like C++ (#ifdef, #define, etc.). When you view expanded YAML in the AzDO UI, you will never see the template syntax. For the `buildSuffix` variable above, if the `isDryRun` parameter is true, the resulting YAML will be:
+> The `template syntax` is evaluated when the YAML is processed at compile-time, similar to pre-processor directives in a language like C++ (#ifdef, #define, etc.). When you view expanded YAML in the AzDO UI, you will never see the template syntax. For the `buildSuffix` variable above, if the `isDryRun` parameter is true, the resulting YAML will be:
 >
 > ```yaml
 >   - name: buildSuffix
 >     value: '-DRYRUN'
 > ```
 >
-> The `macro` syntax is evaluated at runtime. Variables in macro syntax may not be known at compile time. When you view expanded YAML, it will have `$(myName)` in it since it's not until the step is executed that it is replaced with the actual value. If the variable `myname` doesn't exist at runtime then `$(myName)` will left in the YAML, which may be what you want if it's an inline shell script in a task. For the `tags` variable above, if we're not on the `main` branch the resulting YAML will be:
+> The `macro` syntax is evaluated at runtime. Variables in macro syntax may not be known at compile-time. When you view expanded YAML, it will have `$(myName)` in it since it's not until the step is executed that it is replaced with the actual value. If the variable `myname` doesn't exist at runtime then `$(myName)` will left in the YAML, which may be what you want if it's an inline shell script in a task. For the `tags` variable above, if we're not on the `main` branch the resulting YAML will be:
 >
 > ```yaml
 >   - name: tags
