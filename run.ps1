@@ -49,9 +49,9 @@ param(
         }
     }
 }
-
-if ($Tasks -eq "ci") {
-    $Tasks = @('CreateLocalNuget','Build','Test','Pack') # todo sample task expansion
+if (!$Tasks) {
+    Write-Warning "No tasks specified"
+    return
 }
 
 foreach ($currentTask in $Tasks) {
@@ -67,7 +67,19 @@ foreach ($currentTask in $Tasks) {
         switch ($currentTask) {
             'serve' {
                 executeSB -WorkingDirectory (Join-Path $PSScriptRoot .) {
-                bundle exec jekyll serve --livereload
+                  try {
+                  if ($IsMacOS) {
+                    Write-Information "MacOS detected, using Gemfile.lock.mac" -InformationAction Continue
+                    Copy-Item -Path Gemfile.lock Gemfile.lock.bak -Force
+                    Copy-Item -Path Gemfile.lock.mac Gemfile.lock -Force
+                  }
+                  bundle exec jekyll serve --livereload
+                  } finally {
+                    if ($IsMacOS) {
+                      Write-Information "MacOS detected, restoring Gemfile.lock" -InformationAction Continue
+                      Copy-Item -Path Gemfile.lock.bak Gemfile.lock -Force
+                    }
+                  }
                 }
             }
             default {

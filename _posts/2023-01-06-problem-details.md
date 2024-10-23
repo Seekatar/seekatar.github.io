@@ -17,7 +17,7 @@ key: unload-assembly
 
 Problem details is a spec ([RFC7807](https://tools.ietf.org/html/rfc7807)) for returning standard errors from an API.
 
-The existing .NET [ProblemDetails](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.problemdetails) class conforms to that standard. ASP.NET Core also has a [Results.Problem](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.http.results.problem) method to return a `ProblemDetails` object from a controller.
+The existing .NET [ProblemDetails](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.problemdetails) class conforms to that standard. ASP.NET Core also has a [ControllerBase.Problem](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.controllerbase.problem) method to return a `ProblemDetails` object from a controller.
 
 You can handle getting ProblemDetails JSON back to the client in various ways. I explored several of them in [this repo](https://github.com/Seekatar/ioptions-logger-test#returning-problemdetails-from-a-controller). One of the best ones is to use the library from Kristian Hellang: [ProblemDetails](https://www.nuget.org/packages/Hellang.Middleware.ProblemDetails). (Andrew Lock's [blog post](https://andrewlock.net/handling-web-api-exceptions-with-problemdetails-middleware/) about it has pretty good directions (better than the README).)
 
