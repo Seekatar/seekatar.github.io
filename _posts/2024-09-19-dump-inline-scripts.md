@@ -12,14 +12,18 @@ comments: true
 layout: article
 key: 20240919
 ---
+{% assign sBrace = '{{' %}
+{% assign eBrace = '}}' %}
 
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
-Before you even commit an inline script, paste it an editor with syntax highlighting. An errant or missing quote or parenthesis will be much easier to spot.
+This post covers some tips and tricks for creating inline scripts in an Azure DevOps pipeline.
+
+- Before you even commit an inline script, paste it an editor with syntax highlighting. An errant or missing quote or parenthesis will be much easier to spot.
 
 ![alt text](/assets//images/pwsh-syntax-error.png)
 
-I try to avoid using macro or template syntax in an inline script (`$(macroSyntax)` `${{ templateSyntax }}`). Since it is a verbatim replacement, things can get messy if the variable or parameter contains a `$` or `"`. Instead use the `env:` block to set environment variables that can be used in the script. That also makes it easier to test the script locally.
+- I try to avoid using macro or template syntax in an inline script (`$(macroSyntax)` `${{sBrace}}templateSyntax{{eBrace}}`). Since it is a verbatim replacement, things can get messy if the variable or parameter contains a `$` or `"`. Instead use the `env:` block to set environment variables that can be used in the script. That also makes it easier to test the script locally.
 
 ```yaml
 - pwsh: |
@@ -27,10 +31,10 @@ I try to avoid using macro or template syntax in an inline script (`$(macroSynta
     Write-Host "MyParam is $env:MyParam"
     env:
       MyVar: $(MyVar)
-      MyParam: ${{ parameters.MyParam }}
+      MyParam: ${{sBrace}} parameters.MyParam {{eBrace}}
 ```
 
-To test the inline script, paste it into a file, add the environment variables, and run it locally. As usual, watch indenting.
+- To test the inline script, paste it into a file, add the environment variables, and run it locally. As usual, watch indenting.
 
 ```powershell
 $env:MyVar = "TestingVar"
@@ -41,7 +45,7 @@ $env:MyParam = "TestingParam"
     Write-Host "MyParam is $env:MyParam"
 ```
 
-Sometimes you'll get an error in an inline script that is baffling. If you really get stuck you can dump out the generated scripts by adding a step like this:
+- Sometimes you'll get an error in an inline script that is baffling. If you really get stuck you can dump out the generated scripts by adding a step like this:
 
 ```yaml
  - pwsh: |
