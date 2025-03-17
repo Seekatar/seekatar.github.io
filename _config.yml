@@ -225,7 +225,7 @@ plugins:
   - jemoji
 
 ################## jmw added
-imageWidth: "75%"
+imageWidth: "50%"
 imageWidthThird: "25%"
 imageWidthHalf: "37%"
 coverWidth: "50%"
