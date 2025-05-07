@@ -1,0 +1,779 @@
+{
+  "count": 51,
+  "value": [
+    {
+      "id": 233361,
+      "name": "nocf_a_art",
+      "source": "87458123-3cc0-542f-a1a4-5a87db828545",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_a_art",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_art&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_art&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233366,
+      "name": "publish_deploy_pub_1",
+      "source": "87458123-3cc0-542f-a1a4-5a87db828545",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "30DB7A029D66776FC6843A7937E7272A024093CACE8702FDE5DD48E6BBD0272501",
+        "properties": {
+          "RootId": "BF66B0073E3672E6AD865AF9573F22573039B47652784C0667B9A7E564EBC38602",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=publish_deploy_pub_1&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3B1Ymxpc2hfZGVwbG95X3B1Yl8x0/content?format=zip"
+      }
+    },
+    {
+      "id": 233371,
+      "name": "publish_deploy_pub_2",
+      "source": "87458123-3cc0-542f-a1a4-5a87db828545",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "CB4C7B18BDE8654091759698CF18CC848C4C262BEF0FA7EC6919412F07B8EE1701",
+        "properties": {
+          "RootId": "F3A4E568075CDC1386B042F4AE952471B87945E950F1D44EE138B53EC68F131802",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=publish_deploy_pub_2&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3B1Ymxpc2hfZGVwbG95X3B1Yl8y0/content?format=zip"
+      }
+    },
+    {
+      "id": 233378,
+      "name": "publish_deploy_pub_3",
+      "source": "87458123-3cc0-542f-a1a4-5a87db828545",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "CB4C7B18BDE8654091759698CF18CC848C4C262BEF0FA7EC6919412F07B8EE1701",
+        "properties": {
+          "RootId": "F3A4E568075CDC1386B042F4AE952471B87945E950F1D44EE138B53EC68F131802",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=publish_deploy_pub_3&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3B1Ymxpc2hfZGVwbG95X3B1Yl8z0/content?format=zip"
+      }
+    },
+    {
+      "id": 233383,
+      "name": "publish_deploy_pub_4",
+      "source": "87458123-3cc0-542f-a1a4-5a87db828545",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "30DB7A029D66776FC6843A7937E7272A024093CACE8702FDE5DD48E6BBD0272501",
+        "properties": {
+          "RootId": "BF66B0073E3672E6AD865AF9573F22573039B47652784C0667B9A7E564EBC38602",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=publish_deploy_pub_4&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3B1Ymxpc2hfZGVwbG95X3B1Yl800/content?format=zip"
+      }
+    },
+    {
+      "id": 233393,
+      "name": "publish_deploy_pub_folder",
+      "source": "87458123-3cc0-542f-a1a4-5a87db828545",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "37B0CD985BDB38B8832552C1BCC2737EC2AA4FB9B430B22AF5E67F67B1FB8EA001",
+        "properties": {
+          "RootId": "092A2111F48BCE6784C06DCCBE32BB53B8187CE45FBE886A48A53343AE33B6C402",
+          "artifactsize": "45",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=publish_deploy_pub_folder&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3B1Ymxpc2hfZGVwbG95X3B1Yl9mb2xkZXI1/content?format=zip"
+      }
+    },
+    {
+      "id": 233398,
+      "name": "publish_a_pub_1",
+      "source": "87458123-3cc0-542f-a1a4-5a87db828545",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "CB4C7B18BDE8654091759698CF18CC848C4C262BEF0FA7EC6919412F07B8EE1701",
+        "properties": {
+          "RootId": "F3A4E568075CDC1386B042F4AE952471B87945E950F1D44EE138B53EC68F131802",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=publish_a_pub_1&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3B1Ymxpc2hfYV9wdWJfMQ2/content?format=zip"
+      }
+    },
+    {
+      "id": 233401,
+      "name": "publish_a_pub_2",
+      "source": "87458123-3cc0-542f-a1a4-5a87db828545",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "30DB7A029D66776FC6843A7937E7272A024093CACE8702FDE5DD48E6BBD0272501",
+        "properties": {
+          "RootId": "BF66B0073E3672E6AD865AF9573F22573039B47652784C0667B9A7E564EBC38602",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=publish_a_pub_2&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3B1Ymxpc2hfYV9wdWJfMg2/content?format=zip"
+      }
+    },
+    {
+      "id": 233403,
+      "name": "publish_a_pub_3",
+      "source": "87458123-3cc0-542f-a1a4-5a87db828545",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "CB4C7B18BDE8654091759698CF18CC848C4C262BEF0FA7EC6919412F07B8EE1701",
+        "properties": {
+          "RootId": "F3A4E568075CDC1386B042F4AE952471B87945E950F1D44EE138B53EC68F131802",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=publish_a_pub_3&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3B1Ymxpc2hfYV9wdWJfMw2/content?format=zip"
+      }
+    },
+    {
+      "id": 233405,
+      "name": "publish_a_pub_4",
+      "source": "87458123-3cc0-542f-a1a4-5a87db828545",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "30DB7A029D66776FC6843A7937E7272A024093CACE8702FDE5DD48E6BBD0272501",
+        "properties": {
+          "RootId": "BF66B0073E3672E6AD865AF9573F22573039B47652784C0667B9A7E564EBC38602",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=publish_a_pub_4&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3B1Ymxpc2hfYV9wdWJfNA2/content?format=zip"
+      }
+    },
+    {
+      "id": 233409,
+      "name": "publish_a_pub_folder",
+      "source": "87458123-3cc0-542f-a1a4-5a87db828545",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "37B0CD985BDB38B8832552C1BCC2737EC2AA4FB9B430B22AF5E67F67B1FB8EA001",
+        "properties": {
+          "RootId": "092A2111F48BCE6784C06DCCBE32BB53B8187CE45FBE886A48A53343AE33B6C402",
+          "artifactsize": "45",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=publish_a_pub_folder&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3B1Ymxpc2hfYV9wdWJfZm9sZGVy0/content?format=zip"
+      }
+    },
+    {
+      "id": 233420,
+      "name": "deploy_vso_1",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/common_folder",
+        "properties": {
+          "artifactsize": "30"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=deploy_vso_1&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=deploy_vso_1&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233421,
+      "name": "deploy_vso_3",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/a_folder",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=deploy_vso_3&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=deploy_vso_3&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233422,
+      "name": "deploy_vso_4",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/a_folder",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=deploy_vso_4&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=deploy_vso_4&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233423,
+      "name": "deploy_vso_2",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/common_folder",
+        "properties": {
+          "artifactsize": "30"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=deploy_vso_2&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=deploy_vso_2&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233425,
+      "name": "deploy_vso_folder",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/a_folder",
+        "properties": {
+          "artifactsize": "30"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=deploy_vso_folder&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=deploy_vso_folder&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233426,
+      "name": "a_vso_1",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/common_folder",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=a_vso_1&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=a_vso_1&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233427,
+      "name": "a_vso_2",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/common_folder",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=a_vso_2&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=a_vso_2&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233428,
+      "name": "a_vso_3",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/a_folder",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=a_vso_3&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=a_vso_3&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233429,
+      "name": "a_vso_4",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/a_folder",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=a_vso_4&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=a_vso_4&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233430,
+      "name": "a_vso_folder",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/a_folder",
+        "properties": {
+          "artifactsize": "30"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=a_vso_folder&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=a_vso_folder&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233431,
+      "name": "nocf_deploy_vso_2",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_deploy_vso_2",
+        "properties": {
+          "artifactsize": "30"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_deploy_vso_2&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_deploy_vso_2&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233432,
+      "name": "nocf_deploy_vso_1",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_deploy_vso_1",
+        "properties": {
+          "artifactsize": "30"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_deploy_vso_1&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_deploy_vso_1&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233433,
+      "name": "nocf_deploy_vso_4",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_deploy_vso_4",
+        "properties": {
+          "artifactsize": "30"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_deploy_vso_4&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_deploy_vso_4&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233434,
+      "name": "nocf_deploy_vso_3",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_deploy_vso_3",
+        "properties": {
+          "artifactsize": "30"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_deploy_vso_3&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_deploy_vso_3&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233435,
+      "name": "nocf_a_vso_1",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_a_vso_1",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_vso_1&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_vso_1&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233436,
+      "name": "nocf_a_vso_2",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_a_vso_2",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_vso_2&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_vso_2&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233437,
+      "name": "nocf_deploy_vso_folder",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_deploy_vso_folder",
+        "properties": {
+          "artifactsize": "60"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_deploy_vso_folder&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_deploy_vso_folder&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233438,
+      "name": "nocf_a_vso_3",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_a_vso_3",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_vso_3&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_vso_3&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233439,
+      "name": "nocf_a_vso_4",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_a_vso_4",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_vso_4&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_vso_4&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233440,
+      "name": "nocf_a_vso_folder",
+      "source": "ed1bc071-023b-5e74-5ec9-f4b580bb3b50",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_a_vso_folder",
+        "properties": {
+          "artifactsize": "30"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_vso_folder&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_a_vso_folder&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233441,
+      "name": "pipeline_deploy_task_1",
+      "source": "5c6c90da-3901-54a6-30b0-7dc3868819eb",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "30DB7A029D66776FC6843A7937E7272A024093CACE8702FDE5DD48E6BBD0272501",
+        "properties": {
+          "RootId": "BF66B0073E3672E6AD865AF9573F22573039B47652784C0667B9A7E564EBC38602",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=pipeline_deploy_task_1&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3BpcGVsaW5lX2RlcGxveV90YXNrXzE1/content?format=zip"
+      }
+    },
+    {
+      "id": 233443,
+      "name": "pipeline_deploy_task_2",
+      "source": "5c6c90da-3901-54a6-30b0-7dc3868819eb",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "CB4C7B18BDE8654091759698CF18CC848C4C262BEF0FA7EC6919412F07B8EE1701",
+        "properties": {
+          "RootId": "F3A4E568075CDC1386B042F4AE952471B87945E950F1D44EE138B53EC68F131802",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=pipeline_deploy_task_2&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3BpcGVsaW5lX2RlcGxveV90YXNrXzI1/content?format=zip"
+      }
+    },
+    {
+      "id": 233445,
+      "name": "pipeline_deploy_task_3",
+      "source": "5c6c90da-3901-54a6-30b0-7dc3868819eb",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "CB4C7B18BDE8654091759698CF18CC848C4C262BEF0FA7EC6919412F07B8EE1701",
+        "properties": {
+          "RootId": "F3A4E568075CDC1386B042F4AE952471B87945E950F1D44EE138B53EC68F131802",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=pipeline_deploy_task_3&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3BpcGVsaW5lX2RlcGxveV90YXNrXzM1/content?format=zip"
+      }
+    },
+    {
+      "id": 233447,
+      "name": "pipeline_deploy_task_4",
+      "source": "5c6c90da-3901-54a6-30b0-7dc3868819eb",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "30DB7A029D66776FC6843A7937E7272A024093CACE8702FDE5DD48E6BBD0272501",
+        "properties": {
+          "RootId": "BF66B0073E3672E6AD865AF9573F22573039B47652784C0667B9A7E564EBC38602",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=pipeline_deploy_task_4&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3BpcGVsaW5lX2RlcGxveV90YXNrXzQ1/content?format=zip"
+      }
+    },
+    {
+      "id": 233449,
+      "name": "pipeline_deploy_task_folder",
+      "source": "5c6c90da-3901-54a6-30b0-7dc3868819eb",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "88FC3225604A1A3425C105BF92BF626EEA75E321CC83652E0E79D5E7C4E1A64701",
+        "properties": {
+          "RootId": "0375D594020DCAC496259A4B889D17302A410A4F476E99520FE0C1F616DBE27102",
+          "artifactsize": "30",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=pipeline_deploy_task_folder&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3BpcGVsaW5lX2RlcGxveV90YXNrX2ZvbGRlcg2/content?format=zip"
+      }
+    },
+    {
+      "id": 233450,
+      "name": "pipeline_a_task_1",
+      "source": "5c6c90da-3901-54a6-30b0-7dc3868819eb",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "CB4C7B18BDE8654091759698CF18CC848C4C262BEF0FA7EC6919412F07B8EE1701",
+        "properties": {
+          "RootId": "F3A4E568075CDC1386B042F4AE952471B87945E950F1D44EE138B53EC68F131802",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=pipeline_a_task_1&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3BpcGVsaW5lX2FfdGFza18x0/content?format=zip"
+      }
+    },
+    {
+      "id": 233452,
+      "name": "pipeline_a_task_2",
+      "source": "5c6c90da-3901-54a6-30b0-7dc3868819eb",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "30DB7A029D66776FC6843A7937E7272A024093CACE8702FDE5DD48E6BBD0272501",
+        "properties": {
+          "RootId": "BF66B0073E3672E6AD865AF9573F22573039B47652784C0667B9A7E564EBC38602",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=pipeline_a_task_2&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3BpcGVsaW5lX2FfdGFza18y0/content?format=zip"
+      }
+    },
+    {
+      "id": 233453,
+      "name": "pipeline_a_task_3",
+      "source": "5c6c90da-3901-54a6-30b0-7dc3868819eb",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "CB4C7B18BDE8654091759698CF18CC848C4C262BEF0FA7EC6919412F07B8EE1701",
+        "properties": {
+          "RootId": "F3A4E568075CDC1386B042F4AE952471B87945E950F1D44EE138B53EC68F131802",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=pipeline_a_task_3&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3BpcGVsaW5lX2FfdGFza18z0/content?format=zip"
+      }
+    },
+    {
+      "id": 233455,
+      "name": "pipeline_a_task_4",
+      "source": "5c6c90da-3901-54a6-30b0-7dc3868819eb",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "30DB7A029D66776FC6843A7937E7272A024093CACE8702FDE5DD48E6BBD0272501",
+        "properties": {
+          "RootId": "BF66B0073E3672E6AD865AF9573F22573039B47652784C0667B9A7E564EBC38602",
+          "artifactsize": "15",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=pipeline_a_task_4&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3BpcGVsaW5lX2FfdGFza1800/content?format=zip"
+      }
+    },
+    {
+      "id": 233456,
+      "name": "pipeline_a_task_folder",
+      "source": "5c6c90da-3901-54a6-30b0-7dc3868819eb",
+      "resource": {
+        "type": "PipelineArtifact",
+        "data": "88FC3225604A1A3425C105BF92BF626EEA75E321CC83652E0E79D5E7C4E1A64701",
+        "properties": {
+          "RootId": "C7720D86E81EC7388F66298331A3B1B49A15B90E142350971755FE1FA0FDD75902",
+          "artifactsize": "30",
+          "HashType": "DEDUPNODEORCHUNK",
+          "DomainId": "0"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=pipeline_a_task_folder&api-version=5.1",
+        "downloadUrl": "https://artprodcus3.artifacts.visualstudio.com/A9e105622-2322-427d-9472-9dcec764de23/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL2xveWFsaGVhbHRoL3Byb2plY3RJZC8xNzVkZWE5ZC05OGRjLTQwZDgtOTIwNS1hNzFiYTJjZjllYzUvYnVpbGRJZC8xODUwNjMvYXJ0aWZhY3ROYW1lL3BpcGVsaW5lX2FfdGFza19mb2xkZXI1/content?format=zip"
+      }
+    },
+    {
+      "id": 233478,
+      "name": "b_vso_3",
+      "source": "cc3a10a0-fec9-53f6-2694-93cc421199d4",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/b_folder",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=b_vso_3&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=b_vso_3&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233479,
+      "name": "b_vso_2",
+      "source": "cc3a10a0-fec9-53f6-2694-93cc421199d4",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/common_folder",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=b_vso_2&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=b_vso_2&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233480,
+      "name": "b_vso_1",
+      "source": "cc3a10a0-fec9-53f6-2694-93cc421199d4",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/common_folder",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=b_vso_1&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=b_vso_1&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233481,
+      "name": "b_vso_folder",
+      "source": "cc3a10a0-fec9-53f6-2694-93cc421199d4",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/b_folder",
+        "properties": {
+          "artifactsize": "30"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=b_vso_folder&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=b_vso_folder&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233482,
+      "name": "b_vso_4",
+      "source": "cc3a10a0-fec9-53f6-2694-93cc421199d4",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/b_folder",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=b_vso_4&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=b_vso_4&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233486,
+      "name": "nocf_b_vso_1",
+      "source": "cc3a10a0-fec9-53f6-2694-93cc421199d4",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_b_vso_1",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_b_vso_1&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_b_vso_1&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233488,
+      "name": "nocf_b_vso_2",
+      "source": "cc3a10a0-fec9-53f6-2694-93cc421199d4",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_b_vso_2",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_b_vso_2&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_b_vso_2&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233489,
+      "name": "nocf_b_vso_4",
+      "source": "cc3a10a0-fec9-53f6-2694-93cc421199d4",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_b_vso_4",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_b_vso_4&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_b_vso_4&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233490,
+      "name": "nocf_b_vso_folder",
+      "source": "cc3a10a0-fec9-53f6-2694-93cc421199d4",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_b_vso_folder",
+        "properties": {
+          "artifactsize": "30"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_b_vso_folder&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_b_vso_folder&api-version=5.1&%24format=zip"
+      }
+    },
+    {
+      "id": 233491,
+      "name": "nocf_b_vso_3",
+      "source": "cc3a10a0-fec9-53f6-2694-93cc421199d4",
+      "resource": {
+        "type": "Container",
+        "data": "#/20468324/nocf_b_vso_3",
+        "properties": {
+          "artifactsize": "15"
+        },
+        "url": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_b_vso_3&api-version=5.1",
+        "downloadUrl": "https://dev.azure.com/loyalhealth/175dea9d-98dc-40d8-9205-a71ba2cf9ec5/_apis/build/builds/185063/artifacts?artifactName=nocf_b_vso_3&api-version=5.1&%24format=zip"
+      }
+    }
+  ]
+}
