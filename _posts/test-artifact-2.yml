@@ -1,0 +1,32 @@
+# Get-VSTeamBuildArtifact -Id ... -ProjectName BackendTemplate
+trigger:
+  branches:
+    include:
+      - jwallace/test-pipeline
+
+stages:
+  - ${{ each env in split('a,b', ',')}}:
+      - stage: ${{ env }}
+        displayName: ${{ env }}
+        jobs:
+          - job: ${{ env }}
+            displayName: 'Using ##vso[artifact.upload]'
+            pool:
+              vmImage: 'ubuntu-latest'
+            steps:
+              - checkout: none
+              - pwsh: |
+                  "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/result.txt
+                  "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/${{env}}_result.txt
+                displayName: 'Write files'
+
+              - pwsh: |
+                  Write-Host "##vso[artifact.upload containerfolder=common_folder;artifactname=${{env}}]$(Agent.TempDirectory)/${{env}}_result.txt"
+                  Write-Host "##vso[artifact.upload containerfolder=common_folder;artifactname=${{env}}]$(Agent.TempDirectory)/result.txt"
+                displayName: 'Create artifact for ${{ env }}'
+
+              - pwsh: |
+                  Write-Host "##vso[artifact.upload artifactname=no_containerfolder_${{env}}]$(Agent.TempDirectory)/${{env}}_result.txt"
+                  Write-Host "##vso[artifact.upload artifactname=no_containerfolder_${{env}}]$(Agent.TempDirectory)/result.txt"
+                displayName: 'Create artifact for ${{ env }} without containerfolder'
+
