@@ -1,0 +1,212 @@
+# Get-VSTeamBuildArtifact -Id ... -ProjectName BackendTemplate
+trigger:
+  branches:
+    include:
+      - jwallace/test-pipeline
+
+stages:
+  - ${{ each env in split('a,b', ',')}}:
+      - stage: ${{ env }}
+        displayName: ${{ env }}
+        jobs:
+          - job: ${{ env }}_vso
+            displayName: 'Using ##vso[artifact.upload]'
+            pool:
+              vmImage: 'ubuntu-latest'
+            steps:
+              - checkout: none
+              - pwsh: |
+                  mkdir -p $(Agent.TempDirectory)/${{env}}/${{env}}
+                  "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/${{env}}/result_vso.txt
+                  "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt
+                  "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt
+                displayName: 'Write files'
+
+              - pwsh: |
+                  # these two get added to by each stage since same containerfolder
+                  Write-Host "vso[artifact.upload containerfolder=common_folder;artifactname=deploy_vso_1]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+                  Write-Host "##vso[artifact.upload containerfolder=common_folder;artifactname=deploy_vso_1]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+
+                  Write-Host "vso[artifact.upload containerfolder=common_folder;artifactname=deploy_vso_2]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+                  Write-Host "##vso[artifact.upload containerfolder=common_folder;artifactname=deploy_vso_2]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+
+                  Write-Host "vso[artifact.upload containerfolder=common_folder;artifactname=${{env}}_vso_1]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+                  Write-Host "##vso[artifact.upload containerfolder=common_folder;artifactname=${{env}}_vso_1]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+
+                  Write-Host "vso[artifact.upload containerfolder=common_folder;artifactname=${{env}}_vso_2]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+                  Write-Host "##vso[artifact.upload containerfolder=common_folder;artifactname=${{env}}_vso_2]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+
+                  # already exist error for b and c since different containerfolder
+                  if ('${{ env }}' -eq 'a') {
+                    Write-Host "vso[artifact.upload containerfolder=${{env}}_folder;artifactname=deploy_vso_3]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+                    Write-Host "##vso[artifact.upload containerfolder=${{env}}_folder;artifactname=deploy_vso_3]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+
+                    Write-Host "vso[artifact.upload containerfolder=${{env}}_folder;artifactname=deploy_vso_4]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+                    Write-Host "##vso[artifact.upload containerfolder=${{env}}_folder;artifactname=deploy_vso_4]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+
+                    Write-Host "vso[artifact.upload containerfolder=${{env}}_folder;artifactname=deploy_vso_folder]$(Agent.TempDirectory)/${{env}}"
+                    Write-Host "##vso[artifact.upload containerfolder=${{env}}_folder;artifactname=deploy_vso_folder]$(Agent.TempDirectory)/${{env}}"
+                  }
+
+                  Write-Host "vso[artifact.upload containerfolder=${{env}}_folder;artifactname=${{env}}_vso_3]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+                  Write-Host "##vso[artifact.upload containerfolder=${{env}}_folder;artifactname=${{env}}_vso_3]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+
+                  Write-Host "vso[artifact.upload containerfolder=${{env}}_folder;artifactname=${{env}}_vso_4]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+                  Write-Host "##vso[artifact.upload containerfolder=${{env}}_folder;artifactname=${{env}}_vso_4]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+
+                  Write-Host "vso[artifact.upload containerfolder=${{env}}_folder;artifactname=${{env}}_vso_folder]$(Agent.TempDirectory)/${{env}}"
+                  Write-Host "##vso[artifact.upload containerfolder=${{env}}_folder;artifactname=${{env}}_vso_folder]$(Agent.TempDirectory)/${{env}}"
+
+                displayName: 'Create artifact for ${{ env }}'
+
+              - pwsh: |
+                  Write-Host "vso[artifact.upload artifactname=nocf_deploy_vso_1]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+                  Write-Host "##vso[artifact.upload artifactname=nocf_deploy_vso_1]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+
+                  Write-Host "vso[artifact.upload artifactname=nocf_deploy_vso_2]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+                  Write-Host "##vso[artifact.upload artifactname=nocf_deploy_vso_2]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+
+                  Write-Host "vso[artifact.upload artifactname=nocf_deploy_vso_3]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+                  Write-Host "##vso[artifact.upload artifactname=nocf_deploy_vso_3]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+
+                  Write-Host "vso[artifact.upload artifactname=nocf_deploy_vso_4]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+                  Write-Host "##vso[artifact.upload artifactname=nocf_deploy_vso_4]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+
+                  Write-Host "vso[artifact.upload artifactname=nocf_deploy_vso_folder]$(Agent.TempDirectory)/${{env}}"
+                  Write-Host "##vso[artifact.upload artifactname=nocf_deploy_vso_folder]$(Agent.TempDirectory)/${{env}}"
+
+                  Write-Host "vso[artifact.upload artifactname=nocf_${{env}}_vso_1]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+                  Write-Host "##vso[artifact.upload artifactname=nocf_${{env}}_vso_1]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+
+                  Write-Host "vso[artifact.upload artifactname=nocf_${{env}}_vso_2]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+                  Write-Host "##vso[artifact.upload artifactname=nocf_${{env}}_vso_2]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+
+                  Write-Host "vso[artifact.upload artifactname=nocf_${{env}}_vso_3]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+                  Write-Host "##vso[artifact.upload artifactname=nocf_${{env}}_vso_3]$(Agent.TempDirectory)/${{env}}/result_vso.txt"
+
+                  Write-Host "vso[artifact.upload artifactname=nocf_${{env}}_vso_4]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+                  Write-Host "##vso[artifact.upload artifactname=nocf_${{env}}_vso_4]$(Agent.TempDirectory)/${{env}}/${{env}}_result_vso.txt"
+
+                  Write-Host "vso[artifact.upload artifactname=nocf_${{env}}_vso_folder]$(Agent.TempDirectory)/${{env}}"
+                  Write-Host "##vso[artifact.upload artifactname=nocf_${{env}}_vso_folder]$(Agent.TempDirectory)/${{env}}"
+
+                displayName: 'Create artifact for ${{ env }} without containerfolder'
+
+          - ${{ if eq(env, 'a') }}: # these will fail since the artifacts were created in a stage
+            - job: ${{ env }}_publish
+              displayName: 'Using publish task'
+              pool:
+                vmImage: 'ubuntu-latest'
+              steps:
+                - checkout: none
+                - pwsh: |
+                    mkdir -p $(Agent.TempDirectory)/${{env}}/${{env}}
+                    "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/${{env}}/result_pub.txt
+                    "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/${{env}}/publish_result_pub.txt
+                    "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/${{env}}/${{env}}_result_pub.txt
+                    "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/${{env}}/${{env}}_result_pub.txt
+
+                    # this work since using vso like above with no containerfolder
+                    Write-Host "##vso[artifact.upload artifactname=nocf_${{env}}_art]$(Agent.TempDirectory)/${{env}}/publish_result_pub.txt"
+                  displayName: 'Write files'
+
+                # try to publish same as vso, this doesn't work since created with vso
+                # - publish: '$(Agent.TempDirectory)/${{env}}/publish_result_pub.txt'
+                #   artifact: 'nocf_${{env}}_pub_1'
+
+                # try to publish same as vso, this doesn't work since different containerfolder
+                # - publish: '$(Agent.TempDirectory)/${{env}}/publish_result_pub.txt'
+                #   artifact: '${{env}}_pub_1'
+
+                - publish: '$(Agent.TempDirectory)/${{env}}/${{env}}_result_pub.txt'
+                  artifact: 'publish_deploy_pub_1'
+
+                - publish: '$(Agent.TempDirectory)/${{env}}/result_pub.txt'
+                  artifact: 'publish_deploy_pub_2'
+
+                - publish: '$(Agent.TempDirectory)/${{env}}/result_pub.txt'
+                  artifact: 'publish_deploy_pub_3'
+
+                - publish: '$(Agent.TempDirectory)/${{env}}/${{env}}_result_pub.txt'
+                  artifact: 'publish_deploy_pub_4'
+
+                - publish: '$(Agent.TempDirectory)/${{env}}'
+                  artifact: 'publish_deploy_pub_folder'
+
+                - publish: '$(Agent.TempDirectory)/${{env}}/result_pub.txt'
+                  artifact: 'publish_${{env}}_pub_1'
+
+                - publish: '$(Agent.TempDirectory)/${{env}}/${{env}}_result_pub.txt'
+                  artifact: 'publish_${{env}}_pub_2'
+
+                - publish: '$(Agent.TempDirectory)/${{env}}/result_pub.txt'
+                  artifact: 'publish_${{env}}_pub_3'
+
+                - publish: '$(Agent.TempDirectory)/${{env}}/${{env}}_result_pub.txt'
+                  artifact: 'publish_${{env}}_pub_4'
+
+                - publish: '$(Agent.TempDirectory)/${{env}}'
+                  artifact: 'publish_${{env}}_pub_folder'
+
+            - job: ${{ env }}_pipeline
+              displayName: 'Using PublishPipelineArtifact task'
+              pool:
+                vmImage: 'ubuntu-latest'
+              steps:
+                - checkout: none
+                - pwsh: |
+                    mkdir -p $(Agent.TempDirectory)/${{env}}/${{env}}
+                    "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/${{env}}/result_task.txt
+                    "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/${{env}}/${{env}}_result_task.txt
+                    "this is from ${{ env }} at $((get-date).tostring("mm:ss.fff"))" > $(Agent.TempDirectory)/${{env}}/${{env}}_result_task.txt
+                  displayName: 'Write files'
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                    targetPath: '$(Agent.TempDirectory)/${{env}}/${{env}}_result_task.txt'
+                    artifact: 'pipeline_deploy_task_1'
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                    targetPath: '$(Agent.TempDirectory)/${{env}}/result_task.txt'
+                    artifact: 'pipeline_deploy_task_2'
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                    targetPath: '$(Agent.TempDirectory)/${{env}}/result_task.txt'
+                    artifact: 'pipeline_deploy_task_3'
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                    targetPath: '$(Agent.TempDirectory)/${{env}}/${{env}}_result_task.txt'
+                    artifact: 'pipeline_deploy_task_4'
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                    targetPath: '$(Agent.TempDirectory)/${{env}}'
+                    artifact: 'pipeline_deploy_task_folder'
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                    targetPath: '$(Agent.TempDirectory)/${{env}}/result_task.txt'
+                    artifact: 'pipeline_${{env}}_task_1'
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                    targetPath: '$(Agent.TempDirectory)/${{env}}/${{env}}_result_task.txt'
+                    artifact: 'pipeline_${{env}}_task_2'
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                    targetPath: '$(Agent.TempDirectory)/${{env}}/result_task.txt'
+                    artifact: 'pipeline_${{env}}_task_3'
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                    targetPath: '$(Agent.TempDirectory)/${{env}}/${{env}}_result_task.txt'
+                    artifact: 'pipeline_${{env}}_task_4'
+
+                - task: PublishPipelineArtifact@1
+                  inputs:
+                    targetPath: '$(Agent.TempDirectory)/${{env}}'
+                    artifact: 'pipeline_${{env}}_task_folder'
