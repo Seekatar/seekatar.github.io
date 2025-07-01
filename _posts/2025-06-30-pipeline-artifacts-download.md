@@ -12,7 +12,7 @@ key: 20250630
 ---
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
-This is the second blog that explores various ways to use artifacts in Azure DevOps pipelines. The [first blog](2025/05/05/pipeline-artifacts.html) covered publishing pipeline artifacts, while this blog will focus on downloading them.
+This is the second blog that explores various ways to use artifacts in Azure DevOps pipelines. The [first blog](/2025/05/05/pipeline-artifacts.html) covered publishing pipeline artifacts, while this blog will focus on downloading them.
 
 > I assume you have a basic understanding of Azure DevOps pipelines and the terminology. In an earlier blog there's a [brief lesson](/2024/08/10/typical-pipeline.html#folder-structure) on pipelines.
 
