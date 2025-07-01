@@ -12,7 +12,7 @@ key: 20250505
 ---
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
-This is the first blog that explores various ways to use artifacts in Azure DevOps pipelines. Artifacts are files saved on a pipeline that can be downloaded, or shared between jobs in a pipeline. This blog will cover publishing artifacts and the next one will cover using and downloading them. Stick with me to find the hidden danger of using artifacts. (Spoiler: don't use `containerfolder`!)
+This is the first blog that explores various ways to use artifacts in Azure DevOps pipelines. Artifacts are files saved on a pipeline that can be downloaded, or shared between jobs in a pipeline. This blog will cover publishing artifacts and the [next one](/2025-06-30-pipeline-artifacts-download.html) covers downloading them. Stick with me to find the hidden danger of using artifacts. (Spoiler: don't use `containerfolder`!)
 
 Some examples of artifacts I've created:
 
