@@ -1,5 +1,5 @@
 ---
-title: Publishing Artifacts in Azure DevOps Pipelines
+title: Downloading Artifacts in Azure DevOps Pipelines
 tags:
  - azdo
  - pipeline
