@@ -1,10 +1,10 @@
 ---
-title: EventHub Emulator for Local Development
+title: Event Hubs Emulator for Local Development
 tags:
  - azure
  - eventhub
  - emulator
-excerpt: Using an EventHub emulator for local development in Docker
+excerpt: Using an Event Hubs emulator for local development in Docker
 cover: /assets/images/leaf13.png
 comments: true
 layout: article
@@ -70,7 +70,7 @@ When starting it, you supply a config file as a parameter. Below is a sample one
 
 > The config file is pretty simple, but there is a schema file in `EventHub-Emulator/Schema/Config-schema.json`. If you  add `"$schema": "<path>/Schema/Config-schema.json"` you can get some intellisense, or just read it.
 
-It always adds `$default` to the `ConsumerGroups`. If you use that in your code (or use the Kafka client), you can remove all of them from the configuration. If you use the EventHub SDK and set the `consumerGroup` to something other than `$default`, you will need to add it to the configuration. Case doesn't matter since the emulator and Azure always fold the name to lowercase.
+It always adds `$default` to the `ConsumerGroups`. If you use that in your code (or use the Kafka client), you can remove all of them from the configuration. If you use the Event Hubs SDK and set the `consumerGroup` to something other than `$default`, you will need to add it to the configuration. Case doesn't matter since the emulator and Azure always fold the name to lowercase.
 
 ```json
 {
@@ -129,6 +129,10 @@ SaslMechanism = SaslMechanism.Plain,
 SaslUsername = "$ConnectionString",
 SaslPassword = "Endpoint=sb://localhost;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
 ```
+
+## Summary
+
+This was a quick tour using the Azure Event Hubs for local development. It was pretty easy to set up and use. The emulators has enough features to allow you to do a variety of tests with producers and consumers locally that can then be deployed to Azure.
 
 ## Troubleshooting
 
