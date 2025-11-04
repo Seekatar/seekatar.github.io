@@ -20,7 +20,7 @@ The emulator does have limitations, as the [doc](https://learn.microsoft.com/en-
 
 ## Setup
 
-You need a version of Docker running locally that supports `docker-compose`. (I have tested Rancher Desktop, but others should work.) Then clone the emulator installer's [repository](https://github.com/Azure/azure-event-hubs-emulator-installer).
+You need a version of Docker running locally that supports `docker-compose`. (I have tested [Rancher Desktop](https://rancherdesktop.io/), but others should work.) Then clone the emulator installer's [repository](https://github.com/Azure/azure-event-hubs-emulator-installer).
 
 ```bash
 cd ~/code # I'll use this as the example code folder
