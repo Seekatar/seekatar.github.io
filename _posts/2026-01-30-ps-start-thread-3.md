@@ -1,11 +1,11 @@
 ---
-title: Error handling in `Start-ThreadJob`
+title: Error handling in Start-ThreadJob
 tags:
  - powershell
  - start-threadjob
  - threading
 excerpt: Exploring PowerShell's Start-ThreadJob Part 3
-cover: /assets/images/leaf15.png
+cover: /assets/images/leaf17.png
 comments: true
 layout: article
 key: 202601303
@@ -14,8 +14,8 @@ key: 202601303
 
 ## Introduction
 
-1. [Introduction to `Start-ThreadJob`](/2026-01-30-ps-start-thread-1.html)
-1. [Passing parameters to `Start-ThreadJob`](/2026-01-30-ps-start-thread-2.html)
+1. [Introduction to Start-ThreadJob](/2026/01/30/ps-start-thread-1.html)
+1. [Passing parameters to Start-ThreadJob](/2026/01/30/ps-start-thread-2.html)
 1. Error handling in `Start-ThreadJob` (this post)
 
 In this post I'll explore how errors are handled in PowerShell's `Start-ThreadJob` cmdlet.

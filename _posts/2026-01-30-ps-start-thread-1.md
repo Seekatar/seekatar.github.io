@@ -1,5 +1,5 @@
 ---
-title: Introduction to `Start-ThreadJob`
+title: Introduction to Start-ThreadJob
 tags:
  - powershell
  - start-threadjob
@@ -17,8 +17,8 @@ key: 20260130
 This is the first of three posts in which I'll explore PowerShell's `Start-ThreadJob` cmdlet. My goal is to cover some of the subtleties of using thread jobs that are not well documented elsewhere.
 
 1. Introduction to `Start-ThreadJob` (this post)
-1. [Passing parameters to `Start-ThreadJob`](/2026-01-30-ps-start-thread-2.html)
-1. [Error handling in `Start-ThreadJob`](/2026-01-30-ps-start-thread-3.html)
+1. [Passing parameters to Start-ThreadJob](/2026/01/30/ps-start-thread-2.html)
+1. [Error handling in Start-ThreadJob](/2026/01/30/ps-start-thread-3.html)
 
 `Start-ThreadJob` allows you to run code in the background using threads. This post will cover the basics of running a thread job and getting its output.
 
