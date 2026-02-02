@@ -1,10 +1,10 @@
 ---
-title: Exploring PowerShell's Start-ThreadJob Part 1
+title: Introduction to `Start-ThreadJob`
 tags:
  - powershell
  - start-threadjob
  - threading
-excerpt: Using Start-ThreadJob in PowerShell
+excerpt: Exploring PowerShell's Start-ThreadJob Part 1
 cover: /assets/images/leaf15.png
 comments: true
 layout: article
@@ -14,18 +14,24 @@ key: 20260130
 
 ## Introduction
 
-> This is the first of three posts in which I'll explore PowerShell's `Start-ThreadJob` cmdlet. It allows you to run some code in the background using threads. This post will cover the basics of running a thread job and getting its output. Later, I'll cover passing parameters to thread jobs and handling exceptions.
+This is the first of three posts in which I'll explore PowerShell's `Start-ThreadJob` cmdlet. My goal is to cover some of the subtleties of using thread jobs that are not well documented elsewhere.
 
-In my [K8sUtils](https://www.powershellgallery.com/packages?q=k8sutils) PowerShell module, I found an edge case where I couldn't get logs since they were created by a blocking command and removed by the time it returned. I thought I could solve that my having a background job start and get the logs while the blocking command was running.
+1. Introduction to `Start-ThreadJob` (this post)
+1. [Passing parameters to `Start-ThreadJob`](/2026-01-30-ps-start-thread-2.html)
+1. [Error handling in `Start-ThreadJob`](/2026-01-30-ps-start-thread-3.html)
 
-I had used `Start-Job` before, and when looking through the docs, I found `Start-ThreadJob`, which is a better, faster, and more lightweight solution.
+`Start-ThreadJob` allows you to run code in the background using threads. This post will cover the basics of running a thread job and getting its output.
+
+> In my [K8sUtils](https://www.powershellgallery.com/packages?q=k8sutils) PowerShell module, I found an edge case where I couldn't get logs since they were created by a blocking command and removed by the time it returned. To solve that, I started a thread job to get the logs while the blocking command was running. During that implementation, I found there are some subtleties to using `Start-ThreadJob` that are not well documented. That is the impetus for this series of posts.
+
+There is also a `Start-Job` cmdlet which kicks off a separate process locally or remotely. I will not cover that here.
 
 ## Using Start-ThreadJob
 
-To run a background thread, you pass it a script block:
+To run a background thread, you pass it a script block. If you don't use the `-Name` parameter, it will have the name `JobN`, where N is a number.
 
 ```powershell
-# we'll re-use the script block in the examples below
+# I'll re-use the script block in the examples below
 $sb = {
     for ($i = 1; $i -le 2; $i++) {
         Write-Host "Write-Host in ScriptBlock $i"
@@ -43,10 +49,10 @@ Get-Job -Id $job.Id
 
 Id     Name            PSJobTypeName   State         HasMoreData     Location             Command
 --     ----            -------------   -----         -----------     --------             -------
-3      Job3            ThreadJob       Completed     True            PowerShell           …
+3      Job3            ThreadJob       Running       True            PowerShell           …
 ```
 
-To get the output of the job, you receive it:
+The happy path `State`s will be `Running` then `Completed`, but there are others. The `HasMoreData` property indicates if there is output waiting to be received, which you get with `Receive-Job`.
 
 ```powershell
 Receive-Job $job
@@ -61,7 +67,7 @@ To get the output of the job in a variable `$x` do this. Note that `Write-Host` 
 
 ```powershell
 $job = Start-ThreadJob -ScriptBlock $sb
-Start-Sleep -Seconds 3 # pretend we're doing other work here
+Start-Sleep -Seconds 3 # pretend to do other work here
 $x = Receive-Job $job
 
 Write-Host in Start-ThreadJob 1
@@ -72,7 +78,7 @@ $x
 2
 ```
 
-At this point we've received the output from the jobs, but they are still out there. You can see the status of them with `Get-Job`
+At this point you have received the output from the jobs, but they are still out there. You can see the status of them with `Get-Job`
 
 ```powershell
 Get-Job
@@ -83,9 +89,9 @@ Id     Name            PSJobTypeName   State         HasMoreData     Location   
 4      Job4            ThreadJob       Completed     False           PowerShell           …
 ```
 
-If you `Receive-Job` again, you'll get nothing since nothing more has been output since the last `Receive-Job`. To remove the jobs, use `Remove-Job`
+If you `Receive-Job` again, you'll get nothing since `HasMoreData` is `False`. To remove the jobs, use `Remove-Job`
 
-You can use `Receive-Job` to wait for a job and delete it in one step. In this example we'll see the output as it is produced.
+You can use `Receive-Job` to wait for a job and delete it in one step. In this example, you'll see the output as it is produced.
 
 ```powershell
 Start-ThreadJob -ScriptBlock $sb | Receive-Job -Wait -AutoRemoveJob
@@ -96,7 +102,7 @@ Write-Host in ScriptBlock 2
 2
 ```
 
-Note that running with `-Wait` the `Write-Host` and `Write-Output` are interleaved since we are receiving the output as it is produced. As before, we can capture the output in a variable:
+Note that running with `-Wait` the `Write-Host` and `Write-Output` are interleaved since it is receiving the output as it is produced. As before, you can capture the output in a variable:
 
 ```powershell
 $x = Start-ThreadJob -ScriptBlock $sb | Receive-Job -Wait -AutoRemoveJob
@@ -109,7 +115,7 @@ $x
 2
 ```
 
-Since all the `Write-*` cmdlets write to different streams, if you get the output after the job is complete, they are not in time order. This can be annoying if you need messages in the order they were produced. (In my K8sUtils I already had a logging function that wrote to `Write-Host` so I could capture everything in order.)
+Since all the `Write-*` cmdlets write to different streams, if you get the output after the job is complete, they are not in time order. This can be annoying if you need messages in the order they were produced. (In K8sUtils, I use a logging function that writes to `Write-Host` so I capture everything in order.)
 
 ```powershell
 $sb = {
@@ -125,7 +131,7 @@ $sb = {
     }
 }
 $job = Start-ThreadJob -ScriptBlock $sb -Verbose -Debug
-Start-Sleep -Seconds 3 # pretend we're doing other work here
+Start-Sleep -Seconds 3 # pretend to do other work here
 $x = Receive-Job $job -Verbose -Debug -InformationAction Continue
 
 Write-Error: Write-Error 1
@@ -146,7 +152,7 @@ $x
 2
 ```
 
-Couple of things to note here. If you don't use the `-Verbose`, `-Debug`, and `-InformationAction Continue` parameters on `Receive-Job`, you won't see those streams' output. Also notice that `Write-Information` and `Write-Host` are still interleaved since they both write to the host directly.
+Couple of things to note here. If you don't use the `-Verbose`, `-Debug`, and `-InformationAction Continue` parameters on `Receive-Job`, you won't see those streams' output. Also notice that `Write-Information` and `Write-Host` are still interleaved since they both write to the host directly. Here, those parameters are not included and we only get error, warning and host output.
 
 ```powershell
 Start-ThreadJob -ScriptBlock $sb -Verbose -Debug | Receive-Job -Wait -AutoRemoveJob
@@ -186,10 +192,11 @@ Write-Host in ScriptBlock 3
 
 Start-Sleep -Seconds 2;Receive-Job $job
 
-Receive-Job $job -Wait -AutoRemoveJob
-
 Write-Host in ScriptBlock 4
 Write-Host in ScriptBlock 5
+
+Receive-Job $job -Wait -AutoRemoveJob
+
 Write-Host in ScriptBlock 6
 Write-Host in ScriptBlock 7
 Write-Host in ScriptBlock 8
@@ -199,7 +206,7 @@ Write-Host in ScriptBlock 10
 
 ## Summary
 
-In this post, I covered the basics of using `Start-ThreadJob` to run code in the background using threads and getting its output. I showed how to start a thread job, check its status, receive its output, and remove it when done. In future posts, I'll cover passing parameters to thread jobs and handling exceptions.
+In this post, I covered the basics of using `Start-ThreadJob` to run code in the background using threads and getting its output. I showed how to start a thread job, check its status, receive its output, and remove it when done. In future posts, I'll cover passing parameters to thread jobs and error handling.
 
 There are other features of `Start-ThreadJob` and `Receive-Job` that I didn't cover here, such as running multiple jobs in parallel and controlling the number of concurrent threads. Check the links below for more information.
 
@@ -212,4 +219,4 @@ MS Doc
 - [Receive-Job](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/receive-job)
 - [Get-Job](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/get-job)
 - [Remove-Job](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/remove-job)
-- [Start-Job](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/start-job?view=powershell-7.5) reference of the heavier alternative.
+- [Start-Job](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/start-job?view=powershell-7.5) non-thread-based background jobs.

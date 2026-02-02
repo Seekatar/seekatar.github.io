@@ -1,10 +1,10 @@
 ---
-title: Exploring PowerShell's Start-ThreadJob Part 2
+title: Passing parameters to `Start-ThreadJob`
 tags:
  - powershell
  - start-threadjob
  - threading
-excerpt: Passing parameters to thread jobs.
+excerpt: Exploring PowerShell's Start-ThreadJob Part 2
 cover: /assets/images/leaf15.png
 comments: true
 layout: article
@@ -14,9 +14,11 @@ key: 202601302
 
 ## Introduction
 
-> This is the second of three posts in which I'll explore PowerShell's `Start-ThreadJob` cmdlet. In this post I'll show ways of passing data in and out of thread jobs.
+1. [Introduction to `Start-ThreadJob`](/2026-01-30-ps-start-thread-1.html)
+1. Passing parameters to `Start-ThreadJob` (this post)
+1. [Error handling in `Start-ThreadJob`](/2026-01-30-ps-start-thread-3.html)
 
-There are multiple ways to pass data into and out of thread jobs.
+In this post I'll explore the multiple ways to pass data into and out of thread jobs. I'll cover these three methods:
 
 - `-InputObject` parameter
 - `Arguments` parameter
@@ -43,26 +45,26 @@ Receive-Job -Wait -AutoRemoveJob
 Environment is Production
 ```
 
-I'm least fond of this method since the `$input` variable isn't the parameter you pass in, but and enumerator.
+This is my least preferred method since the `$input` variable isn't the parameter you pass in, but an enumerator.
 
 ## Using -ArgumentList
 
-Using  `-ArgumentList` is similar to other PowerShell cmdlets that accept arguments. You pass in a list of arguments you want to use.
+Using  `-ArgumentList` is similar to other PowerShell cmdlets that accept arguments. You pass in a list of arguments you want to use and consume them via a `param()` block.
 
 ```powershell
 $i = 42
 
 Start-ThreadJob -ScriptBlock {
-        param($intValue, $o, $timestamp)
+    param($intValue, $objectRef, $timestampValue)
         "`$intValue $intValue"
-        "`$o.environment: $($o.Environment)"
-        "`$timestamp: $timestamp"
+        "`$objectRef.environment: $($objectRef.Environment)"
+        "`$timestampValue: $timestampValue"
     } -ArgumentList $i, $object, (Get-Date) |
 Receive-Job -Wait -AutoRemoveJob
 
 $intValue 42
-$o.environment: Production
-$timestamp: 01/30/2026 15:08:52
+$objectRef.environment: Production
+$timestampValue: 01/30/2026 15:08:52
 ```
 
 This works pretty well. What you pass in on the `-ArgumentList` is the same as what you get in the `param()` block. I like this a bit better.
@@ -75,8 +77,8 @@ If you've used script blocks in other situations, you may be familiar with the `
 $timestamp = Get-Date
 Start-ThreadJob -ScriptBlock {
         "`$intValue $using:i"
-        "`$o.environment: $(($using:object).Environment)"
-        "`$timestamp: $using:timestamp"
+        "`$objectRef.environment: $(($using:object).Environment)"
+        "`$timestampValue: $using:timestamp"
     } |
 Receive-Job -Wait -AutoRemoveJob
 ```
@@ -85,7 +87,7 @@ This is similar to `-ArgumentList`, but you don't need a `param()` block. This i
 
 ## Getting Output
 
-As we saw in part 1, anything written to output will be what is returned by `Receive-Job`.
+As we saw in [part 1](/2026-01-30-ps-start-thread-1.html), anything written to output (implicitly, with `Write-Output`, or `return`) will be what is returned by `Receive-Job`.
 
 ```powershell
 ($s,$i,$h) = Start-ThreadJob -ScriptBlock {
@@ -115,7 +117,7 @@ In this (contrived) example, the output is a tuple of string, integer, and hasht
 
 ## Changing Values in the Caller's Scope
 
-Instead of passing something in and getting something out, what it you (heaven forbid) want to change an object in the caller's scope? If you have a reference type (like a hashtable or custom object), you can do this using `$using:`.
+Instead of passing something in and getting something out, what if you (heaven forbid) want to change an object in the caller's scope? If you have a reference type (like a hashtable or custom object), you can do this using `$using:`.
 
 ```powershell
 $result = Start-ThreadJob -ScriptBlock {
@@ -145,7 +147,7 @@ $outerVar
 
 ## Summary
 
-In this post, I covered showed how to get data into and out of thread jobs using `-InputObject`, `-ArgumentList`, and `$using:`. In the next post I'll cover exception handling in thread jobs.
+In this post, I showed how to get data into and out of thread jobs using `-InputObject`, `-ArgumentList`, and `$using:`. In the next post I'll cover error handling in thread jobs.
 
 ## Links
 
@@ -156,4 +158,5 @@ MS Doc
 - [Receive-Job](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/receive-job)
 - [Get-Job](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/get-job)
 - [Remove-Job](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/remove-job)
-- [Start-Job](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/start-job?view=powershell-7.5) reference of the heavier alternative.
+- [Start-Job](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/start-job?view=powershell-7.5) non-thread-based background jobs.
+
