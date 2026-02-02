@@ -1,11 +1,11 @@
 ---
-title: Passing parameters to `Start-ThreadJob`
+title: Passing parameters to Start-ThreadJob
 tags:
  - powershell
  - start-threadjob
  - threading
 excerpt: Exploring PowerShell's Start-ThreadJob Part 2
-cover: /assets/images/leaf15.png
+cover: /assets/images/leaf16.png
 comments: true
 layout: article
 key: 202601302
@@ -14,9 +14,9 @@ key: 202601302
 
 ## Introduction
 
-1. [Introduction to `Start-ThreadJob`](/2026-01-30-ps-start-thread-1.html)
+1. [Introduction to Start-ThreadJob](/2026/01/30/ps-start-thread-1.html)
 1. Passing parameters to `Start-ThreadJob` (this post)
-1. [Error handling in `Start-ThreadJob`](/2026-01-30-ps-start-thread-3.html)
+1. [Error handling in Start-ThreadJob](/2026/01/30/ps-start-thread-3.html)
 
 In this post I'll explore the multiple ways to pass data into and out of thread jobs. I'll cover these three methods:
 
