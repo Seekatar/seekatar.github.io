@@ -1,22 +1,26 @@
 ---
-title: Using Docker ONBUILD to Keep Secrets Out of Base Images
+title: ONBUILD Can Keep Secrets Out of Docker Images
 tags:
  - docker
  - dotnet
+ - nuget
+ - onbuild
  - security
  - buildkit
-excerpt: How ONBUILD and BuildKit secrets solved the problem of leaking NuGet credentials in a shared base image
+excerpt: Avoid baking secrets into base images by using Docker's ONBUILD instruction combined with BuildKit secrets.
 cover: /assets/images/leaf1.jpg
 comments: true
 layout: article
-key: feb-11-2026
+key: 20260211
 ---
 
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
 ## The Problem
 
-We have a custom .NET SDK base image that is built once, pushed to our container registry, and then used by many downstream service Dockerfiles. This base image needs to configure a private NuGet feed so that downstream builds can restore internal packages. The original Dockerfile looked like this:
+We have custom .NET SDK base image, that sets up the build environment for all our applications. In the Dockerfile, we create a `NuGet.config` file for accessing our private NuGet repository. Originally we baked in a Personal Access Token (PAT), and used a multistage Dockerfile to avoid leaking the PAT. This is fine, except PATs expire, and then stuff breaks.
+
+To solve that we decided to use Managed Identities in the Azure DevOps pipeline so we never have to worry about expiring credentials. The problem with that is that the NuGet credentials aren't known when the base image is built. What we need is a way to have common code in the base Docker file, but pass in the credentials at build time. The Dockerfile ONBUILD instruction to the rescue!
 
 ```dockerfile
 ARG sdkVersion=9.0
@@ -63,24 +67,22 @@ That's the NuGet PAT, right there in the layer history. Not great.
 
 On top of that, the `NuGet.Config` file containing the password is copied into the `final` stage, so the password is also sitting in a file inside the published image.
 
-## Why Not Just Use BuildKit Secrets?
+> You may think of using `--mount=type=secret` but
 
-The obvious fix is to use BuildKit's `--mount=type=secret` instead of `ARG`. Secrets mounted this way are only available during the `RUN` step and are never persisted in any layer. But there's a catch.
+## Using ONBUILD
 
-This base image is built in a CI pipeline and pushed to a shared registry. The downstream service Dockerfiles look something like:
+Docker's [`ONBUILD`](https://docs.docker.com/reference/dockerfile/#onbuild) instruction allows you to add commands to a derived image when it is built. It's like putting a macro in the base image that is injected into the Dockerfile that uses this image.
+
+Here's a typical example of using `ONBUILD`. We'll create a base image with all the tools to "compile" our app. In this case it's just `cowsay`. The base image installs it, and has a "compile.sh" script that runs it.
 
 ```dockerfile
-FROM myregistry.azurecr.io/my-sdk:9.0 AS build
-# ... restore, build, publish
 ```
 
-If we use `--mount=type=secret` in the base image's Dockerfile, the NuGet source gets configured at base image build time. That's fine for the base image build itself, but the NuGet.Config with the password is still in the image. We're back to the same problem.
+The `ONBUILD` statements will copy the source code into the new image, do `ls`, then "compile" the code.
 
-What we really want is: the base image should have _no_ NuGet password in it at all, and each downstream build should provide its own credentials at build time.
+```dockerfile
+```
 
-## ONBUILD to the Rescue
-
-Docker's [`ONBUILD`](https://docs.docker.com/reference/dockerfile/#onbuild) instruction is a trigger. It records a command in the image metadata that doesn't run when you build _this_ image -- it runs when someone builds a new image _from_ this image.
 
 By combining `ONBUILD` with `--mount=type=secret`, we get the best of both worlds. Here's the updated Dockerfile:
 
