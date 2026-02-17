@@ -1,0 +1,13 @@
+FROM base-onbuild:latest AS build
+
+WORKDIR /app
+COPY . .
+RUN dotnet publish "Hello.csproj" -c Release --output /app/publish
+# RUN cat /root/.nuget/NuGet/NuGet.Config # uncomment out to verify secret
+
+FROM mcr.microsoft.com/dotnet/runtime:10.0 AS final
+
+COPY --from=build /app/publish /app
+WORKDIR /app
+
+ENTRYPOINT ["dotnet", "Hello.dll"]

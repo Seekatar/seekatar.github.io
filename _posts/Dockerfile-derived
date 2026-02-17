@@ -1,4 +1,0 @@
-# docker build -t derived -f ./Dockerfile-derived  . --progress plain
-FROM onbuild
-
-RUN echo "Derived image build complete"

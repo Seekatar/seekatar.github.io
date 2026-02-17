@@ -7,8 +7,8 @@ tags:
  - onbuild
  - security
  - buildkit
-excerpt: Avoid baking secrets into base images by using Docker's ONBUILD instruction combined with BuildKit secrets.
-cover: /assets/images/leaf1.jpg
+excerpt: Avoid baking secrets into base images by using Docker's ONBUILD instruction.
+cover: /assets/images/docker-1.png
 comments: true
 layout: article
 key: 20260211
@@ -16,141 +16,194 @@ key: 20260211
 
 ![image]({{ page.cover }}){: width="{{ site.imageWidth }}" }
 
+## Introduction
+
+In this post I'll share how I used Docker's `ONBUILD` instruction to avoid baking in a secret and use Managed Identities instead.
+
 ## The Problem
 
-We have custom .NET SDK base image, that sets up the build environment for all our applications. In the Dockerfile, we create a `NuGet.config` file for accessing our private NuGet repository. Originally we baked in a Personal Access Token (PAT), and used a multistage Dockerfile to avoid leaking the PAT. This is fine, except PATs expire, and then stuff breaks.
+I have a custom .NET SDK base image that sets up the build environment for many applications to keep things DRY and standardized. In the `Dockerfile` of the base image, I create a `NuGet.config` file for accessing a private NuGet repository. Originally, I baked in a Personal Access Token (PAT), and used a multistage Dockerfile to avoid leaking it. That was fine, except PATs expire, and then stuff breaks.
 
-To solve that we decided to use Managed Identities in the Azure DevOps pipeline so we never have to worry about expiring credentials. The problem with that is that the NuGet credentials aren't known when the base image is built. What we need is a way to have common code in the base Docker file, but pass in the credentials at build time. The Dockerfile ONBUILD instruction to the rescue!
+To solve that, I decided to use Managed Identities in Azure DevOps pipelines so I never have to worry about expiring credentials. The problem with that is that the NuGet credentials for the Managed Identity aren't known when the base image is built. What I needed was a way to have common code in the base `Dockerfile`, but pass in the credentials at build time. The Dockerfile `ONBUILD` instruction solved that problem.
+
+Here's a simplified version of the original `Dockerfile` (this sample will work, even with the dummy source URL.)
 
 ```dockerfile
-ARG sdkVersion=9.0
-
-FROM mcr.microsoft.com/dotnet/sdk:${sdkVersion} AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG nugetPassword
-ARG nugetUsername=IgnoredWhenUsingPAT
-ARG certPassword
 
-RUN apt update -y && apt upgrade -y
+RUN echo Other setup for build
 
-WORKDIR /app
-
-RUN dotnet nuget add source "https://example.pkgs.visualstudio.com/_packaging/MyNuget/nuget/v3/index.json" \
-                -n MyNuget -u ${nugetUsername} \
-                -p ${nugetPassword} \
-                --store-password-in-clear-text
-
-# ... certificate generation, multi-stage copy, etc.
-
-FROM mcr.microsoft.com/dotnet/sdk:${sdkVersion} AS final
-COPY --from=build /app/cert.pfx /app/cert.pfx
-COPY --from=build /root/.nuget/NuGet/NuGet.Config /root/.nuget/NuGet/NuGet.Config
-
-WORKDIR /
+RUN dotnet nuget add source "https://..." \
+                -n MyNuget -u ignoredWhenUsingPAT --store-password-in-clear-text \
+                -p ${nugetPassword}
 ```
 
-And the build command would be something like:
+To build the image with a super secret password:
 
 ```bash
-docker build --build-arg nugetPassword=$NUGET_PAT -t my-sdk:9.0 .
+docker build -t base -f ./Dockerfile-base --build-arg nugetPassword=Monkey123! .
 ```
 
-This works, but there's a security problem: `ARG` values are baked into the image layer metadata. Anyone who can pull the image from the registry can run `docker history` and see the password in plain text.
+That works, but there's a security problem: `ARG` values are baked into the image layer metadata. Anyone who can pull the image from the registry can run `docker history` and see the password in plain text.
 
-```bash
-$ docker history my-sdk:9.0
-IMAGE          CREATED          CREATED BY                                      SIZE
-...
-<missing>      2 minutes ago    RUN ... -p MY_SECRET_PAT --store-password...    1.2kB
+```text
+> docker history base
+IMAGE          CREATED         CREATED BY                                      SIZE      COMMENT
+b6437fdd4e05   3 seconds ago   RUN |1 nugetPassword=Monkey123! /bin/sh -c d…   3.87kB    buildkit.dockerfile.v0
+<missing>      3 seconds ago   ARG nugetPassword=Monkey123!                    0B        buildkit.dockerfile.v0
 ```
 
-That's the NuGet PAT, right there in the layer history. Not great.
+There's the NuGet PAT, right there in the layer history. For me it wasn't a huge deal since you have to have access to pull the image to see it, and you'd probably have access to the NuGet feed anyway, but it'd probably be flagged in a security audit.
 
-On top of that, the `NuGet.Config` file containing the password is copied into the `final` stage, so the password is also sitting in a file inside the published image.
-
-> You may think of using `--mount=type=secret` but
+I got around that by using a second stage and copying the `NuGet.Config` from the first stage. That way the password didn't show up in the history, but it is still in the `NuGet.Config` file, so someone could shell into the image and read it.
 
 ## Using ONBUILD
 
-Docker's [`ONBUILD`](https://docs.docker.com/reference/dockerfile/#onbuild) instruction allows you to add commands to a derived image when it is built. It's like putting a macro in the base image that is injected into the Dockerfile that uses this image.
+Before diving into the specific solution, here's a contrived example demonstrating how `ONBUILD` works.
 
-Here's a typical example of using `ONBUILD`. We'll create a base image with all the tools to "compile" our app. In this case it's just `cowsay`. The base image installs it, and has a "compile.sh" script that runs it.
+Docker's [`ONBUILD`](https://docs.docker.com/reference/dockerfile/#onbuild) instruction allows you to put instructions in a base image that get added to a derived image when it is built. It's like putting macros in the base image that are injected at the top of the derived image's `Dockerfile`.
 
-```dockerfile
-```
-
-The `ONBUILD` statements will copy the source code into the new image, do `ls`, then "compile" the code.
+Here's my example of using `ONBUILD` for compiling an app. I'll create a base image with all the tools to "compile" the app. In this case it's just `cowsay`. The base image installs it and creates a `compile.sh` script that runs it.
 
 ```dockerfile
-```
-
-
-By combining `ONBUILD` with `--mount=type=secret`, we get the best of both worlds. Here's the updated Dockerfile:
-
-```dockerfile
-ARG sdkVersion=9.0
-
-FROM mcr.microsoft.com/dotnet/sdk:${sdkVersion} AS build
-ARG certPassword
-
-RUN apt update -y && apt upgrade -y
+FROM ubuntu AS base
 
 WORKDIR /app
 
-# certificate generation
-RUN openssl genrsa -des3 -passout pass:${certPassword} -out server.key 2048 && \
-    openssl rsa -passin pass:${certPassword} -in server.key -out server.key && \
-    openssl req -sha256 -new -key server.key -out server.csr -subj '/CN=my-service' && \
-    openssl x509 -req -sha256 -days 3650 -in server.csr -signkey server.key -out server.crt && \
-    openssl pkcs12 -export -out cert.pfx -inkey server.key -in server.crt -passout pass:${certPassword}
+RUN echo 'echo ">>> Compiling..."\ncat ./cowsay.txt | cowsay\necho "<<< All done!"' > compile.sh . \
+    chmod +x compile.sh
 
-FROM mcr.microsoft.com/dotnet/sdk:${sdkVersion} AS final
+RUN apt-get update && apt-get install -y cowsay && rm -rf /var/lib/apt/lists/*
+ENV PATH="${PATH}:/usr/games"
 
-COPY --from=build /app/cert.pfx /app/cert.pfx
-COPY --from=build /root/.nuget/NuGet/NuGet.Config /root/.nuget/NuGet/NuGet.Config
-
-WORKDIR /
-
-ONBUILD RUN --mount=type=secret,id=nugetPassword,env=nugetPassword \
-    dotnet nuget add source "https://example.pkgs.visualstudio.com/_packaging/MyNuget/nuget/v3/index.json" \
-                -n MyNuget \
-                -u az \
-                -p $nugetPassword \
-                --store-password-in-clear-text
+ONBUILD WORKDIR /app
+ONBUILD COPY ./cowsay.txt .
+ONBUILD RUN ls -la
+ONBUILD RUN ./compile.sh
 ```
 
-Notice there is no `ARG nugetPassword` anywhere. The `ONBUILD` at the end means that `RUN --mount=type=secret` instruction is _stored_ but not _executed_ when building this base image. The base image is clean.
-
-## What Happens Downstream
-
-When a service Dockerfile does `FROM myregistry.azurecr.io/my-sdk:9.0`, Docker sees the `ONBUILD` trigger and runs the NuGet source configuration as the first step. The downstream build command passes the secret:
+When it is built, notice that there are no `ONBUILD` instructions in the log or history:
 
 ```bash
-docker build --secret id=nugetPassword,env=NUGET_PAT -t my-service .
+> docker build -f ./Dockerfile-base -t base-cowsay .
+...
+ => => transferring context: 110B
+ => [2/5] WORKDIR /app
+ => [3/5] COPY compile.sh .
+ => [4/5] RUN chmod +x compile.sh
+ => [5/5] RUN apt-get update && apt-get install -y cowsay && rm -rf /var/lib/apt/lists/*
+ => exporting to image
+ ...
+ ```
+
+```bash
+> docker history base-cowsay
+IMAGE          CREATED          CREATED BY                                      SIZE      COMMENT
+6eac5ad9e27e   50 minutes ago   ENV PATH=/usr/local/sbin:/usr/local/bin:/usr…   0B        buildkit.dockerfile.v0
+<missing>      50 minutes ago   RUN /bin/sh -c apt-get update && apt-get ins…   52.2MB    buildkit.dockerfile.v0
+<missing>      50 minutes ago   RUN /bin/sh -c chmod +x compile.sh # buildkit   73B       buildkit.dockerfile.v0
+<missing>      50 minutes ago   COPY compile.sh . # buildkit                    73B       buildkit.dockerfile.v0
 ```
 
-The flow is:
+The derived Dockerfile looks like this:
 
-1. Docker processes the `FROM my-sdk:9.0` line
-2. The `ONBUILD RUN --mount=type=secret,...` trigger fires
-3. BuildKit mounts the `nugetPassword` secret as an environment variable for just that `RUN` step
-4. `dotnet nuget add source` configures the private feed
-5. The secret is never persisted in any layer
+```dockerfile
+FROM base-cowsay
 
-The NuGet.Config _does_ end up in the downstream build image with the password, but that's fine because service Dockerfiles use multi-stage builds -- the build stage with NuGet.Config is discarded, and only the final runtime stage (based on `aspnet`, not `sdk`) is published.
+RUN echo "Derived image build complete"
+```
+
+When it is built, we'll see all the `ONBUILD` instructions executed as part of the build. It "compiles" cowsay.txt that was copied via the base image's `ONBUILD COPY ./cowsay.txt .` instruction:
+
+```text
+ => [1/2] FROM docker.io/library/base-cowsay:latest
+ => [internal] load build context
+ => => transferring context: 97B
+ => [2/6] ONBUILD WORKDIR /app
+ => [3/6] ONBUILD COPY ./cowsay.txt .
+ => [4/6] ONBUILD RUN ls -la
+ => [5/6] ONBUILD RUN ./compile.sh
+ => [6/6] RUN echo "Derived image build complete"
+ => exporting to image
+```
+
+Adding `--progress plain` to the build command shows the "compiler" output:
+
+```text
+#9 [5/6] ONBUILD RUN ./compile.sh
+#9 0.342 >>> Compiling...
+#9 0.356  ______________________________________
+#9 0.356 / ONBUILD instructions executed during \
+#9 0.356 \ build of derived image               /
+#9 0.356  --------------------------------------
+#9 0.356         \   ^__^
+#9 0.356          \  (oo)\_______
+#9 0.356             (__)\       )\/\
+#9 0.356                 ||----w |
+#9 0.356                 ||     ||
+#9 0.357 <<< All done!
+```
+
+The history shows the `ONBUILD` instructions as if they were part of the derived image (in reverse order):
+
+```text
+> docker history derived-cowsay
+IMAGE          CREATED              CREATED BY                                      SIZE      COMMENT
+5b4167870dab   About a minute ago   RUN /bin/sh -c echo "Derived image build com…   0B        buildkit.dockerfile.v0
+<missing>      About a minute ago   RUN /bin/sh -c ./compile.sh # buildkit          0B        buildkit.dockerfile.v0
+<missing>      About a minute ago   RUN /bin/sh -c ls -la # buildkit                0B        buildkit.dockerfile.v0
+<missing>      About a minute ago   COPY ./cowsay.txt . # buildkit                  60B       buildkit.dockerfile.v0
+<missing>      About a minute ago   WORKDIR /app                                    0B        buildkit.dockerfile.v0
+```
+
+## Combining ONBUILD with Build Secrets
+
+By using `ONBUILD`, I can defer getting the secret until build time. Here's the updated base Dockerfile with the `nuget add` now in an `ONBUILD` instruction, and no `ARG` instruction:
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+
+RUN echo Other setup for build
+
+ONBUILD RUN --mount=type=secret,id=nugetPassword,env=nugetPassword \
+        dotnet nuget add source "https://..." \
+                -n MyNuget -u ignoredWhenUsingPAT --store-password-in-clear-text \
+                -p ${nugetPassword}
+```
+
+The base image now only has one layer.
+
+```bash
+> docker history base-onbuild
+IMAGE          CREATED         CREATED BY                                      SIZE      COMMENT
+df2ae0933928   6 seconds ago   RUN /bin/sh -c echo "Other setup for build"    0B        buildkit.dockerfile.v0
+```
+
+The only change required to the derived `Dockerfile` is to change the `FROM` line to use `base-onbuild`. To build it, instead of using `ARG` to pass the secret, I used the `--mount=type=secret` parameter to get the `nugetPassword` passed in at build time:
+
+```bash
+export NUGET_PAT=Monkey123!
+docker build -f ./Dockerfile-onbuild -t onbuild --secret id=nugetPassword,env=NUGET_PAT .
+```
+
+> Using `--secret` is a topic for another post, but it is the preferred way to pass secrets into builds. See the links below for more info.
+
+If you want to verify that the secret is set, you can add this line in the first (build) stage of the derived Dockerfile:
+
+```dockerfile
+RUN cat /root/.nuget/NuGet/NuGet.Config
+```
+
+As a final note, in my Azure DevOps pipeline, setting the `NUGET_PAT` environment variable before the [Docker@2](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/docker-v2?view=azure-pipelines&tabs=yaml) task did not work. Instead, I used a temporary file and `--secret id=nugetPassword,src=$(Agent.TempDirectory)/nuget-password.txt`
 
 ## Summary
 
-| | `ARG` approach | `ONBUILD` + `--mount=type=secret` |
-|---|---|---|
-| Password in base image history | Yes | No |
-| Password in base image files | Yes (NuGet.Config) | No |
-| Password in downstream build layer | Yes | No (ephemeral mount) |
-| Downstream must pass credentials | No (baked in) | Yes (via `--secret`) |
-
-The combination of `ONBUILD` and BuildKit secrets is a clean solution for base images that need to defer credential configuration to their consumers. The base image stays secret-free, and each downstream build provides its own credentials ephemerally.
+In this post, I shared how to use Docker's `ONBUILD` instruction to keep secrets out of base images. This allows you to have common build logic in the base image, but defer getting secrets until build time. For my particular scenario, it allowed me to use Managed Identities in Azure DevOps pipelines without baking a PAT into the base image.
 
 ## Links
 
 * [Dockerfile reference: ONBUILD](https://docs.docker.com/reference/dockerfile/#onbuild)
-* [Docker BuildKit: Build secrets](https://docs.docker.com/build/building/secrets/)
-* [Docker BuildKit: Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
+* [Docker Build: Build secrets](https://docs.docker.com/build/building/secrets/)
+* [Docker Build: Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
+* [How to use Dockerfile ONBUILD to run triggers on downstream builds](https://www.howtogeek.com/devops/how-to-use-dockerfile-onbuild-to-run-triggers-on-downstream-builds/) - James Walker, HowToGeek
