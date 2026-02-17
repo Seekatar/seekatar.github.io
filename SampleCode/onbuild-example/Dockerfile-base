@@ -1,0 +1,15 @@
+# docker build -f ./Dockerfile-base -t base-cowsay . --progress plain
+FROM ubuntu AS base
+
+WORKDIR /app
+
+RUN echo 'echo ">>> Compiling..."\ncat ./cowsay.txt | cowsay\necho "<<< All done!"' > compile.sh . \
+    chmod +x compile.sh
+
+RUN apt-get update && apt-get install -y cowsay && rm -rf /var/lib/apt/lists/*
+ENV PATH="${PATH}:/usr/games"
+
+ONBUILD WORKDIR /app
+ONBUILD COPY ./cowsay.txt .
+ONBUILD RUN ls -la
+ONBUILD RUN ./compile.sh

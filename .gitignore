@@ -26,3 +26,6 @@ _site/
 .jekyll-metadata
 .jekyll-cache/
 **:Zone.Identifier
+
+**/bin
+**/obj
