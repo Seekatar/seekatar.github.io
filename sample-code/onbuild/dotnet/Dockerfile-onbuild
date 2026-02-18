@@ -1,3 +1,5 @@
+# export NUGET_PAT=Monkey123!
+# docker build -f ./Dockerfile-onbuild -t onbuild --secret 'id=nugetPassword,env=NUGET_PAT' --progress plain .
 FROM base-onbuild:latest AS build
 
 WORKDIR /app

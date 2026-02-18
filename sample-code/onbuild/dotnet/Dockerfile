@@ -1,3 +1,4 @@
+# docker build -t derived-cowsay -f ./Dockerfile --progress plain .
 FROM base:latest AS build
 
 WORKDIR /app

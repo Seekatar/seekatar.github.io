@@ -1,8 +1,10 @@
+# docker build -f ./Dockerfile-base -t base-cowsay --progress plain .
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG nugetPassword
+
+# ... other setup for build.
 
 RUN dotnet nuget add source "https://myorg.pkgs.visualstudio.com/_packaging/MySource/nuget/v3/index.json" \
                 -n MylNuget -u ignoredWhenUsingPAT --store-password-in-clear-text \
                 -p ${nugetPassword}
 
-# ... other setup for build.
