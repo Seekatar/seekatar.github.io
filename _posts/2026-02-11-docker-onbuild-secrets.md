@@ -1,5 +1,5 @@
 ---
-title: ONBUILD Can Keep Secrets Out of Docker Images
+title: Using Docker ONBUILD
 tags:
  - docker
  - dotnet
@@ -203,6 +203,7 @@ In this post, I shared how to use Docker's `ONBUILD` instruction to keep secrets
 
 ## Links
 
+* [Sample code for this post](https://github.com/Seekatar/seekatar.github.io/tree/main/sample-code/onbuild)
 * [Dockerfile reference: ONBUILD](https://docs.docker.com/reference/dockerfile/#onbuild)
 * [Docker Build: Build secrets](https://docs.docker.com/build/building/secrets/)
 * [Docker Build: Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
